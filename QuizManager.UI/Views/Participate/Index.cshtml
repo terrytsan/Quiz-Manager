@@ -1,0 +1,156 @@
+﻿@model QuizManager.UI.Models.ParticipateViewModel
+
+@{
+    ViewBag.Title = "Participate";
+}
+
+<h2>Participate</h2>
+
+<container>
+    <h1>@ViewBag.UserId</h1>
+    <div class="container row">
+        <form id="submitResponseForm" class="col-md-8">
+            <div class="form-group">
+                @Html.LabelFor(m => m.SelectedQuiz, new {@class = "control-label"})
+                @Html.DropDownListFor(m => m.SelectedQuiz, Model.AvailableQuizzes, new {id = "availableQuizzesDropDown", @class = "form-control", @onChange = "dropDownOnChange()"})
+            </div>
+            @if (Model.CurrentQuestion != null)
+            {
+                <p id="txtCurrentQuestion">Round @Model.CurrentQuestion.Round Question @Model.CurrentQuestion.QuestionNumber</p>
+                @Html.Hidden("questionId", Model.CurrentQuestion.Id)
+            }
+            else if (Model.SelectedQuiz != 0)
+            {
+                <p id="txtCurrentQuestion" class="text-danger">Error getting current question.</p>
+            }
+            else
+            {
+                <p id="txtCurrentQuestion"></p>
+            }
+
+            <div class="form-group">
+                <label>Answer</label>
+                @Html.TextBoxFor(m => m.Response, new {id = "txtResponse", @class = "form-control", autocomplete = "off"})
+            </div>
+            <button class="btn btn-primary" type="submit">Submit</button>
+            <button id="btnReset" class="btn btn-primary" type="reset">Reset</button>
+            <p> </p>
+        </form>
+
+        <div class="col-md-4">
+            <ul id="participantsList" class="list-group">
+            </ul>
+        </div>
+    </div>
+</container>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/signalr")
+    @Scripts.Render("/signalr/hubs")
+    <script type="text/javascript">
+        $(function () {
+        	var participate = $.connection.participateHub;
+        	
+        	// Create a function that the hub will call to update participants list
+        	participate.client.updateParticipantsList = function (name) {
+        		console.log(name+' has submitted');
+        		$('#participantsList li').each(function (){
+        			console.log($(this).text());
+        			if ($(this).text() === name){
+        			    $(this).addClass("list-group-item-success");
+        			    // Leave the .each() 
+        			    return false;
+        			}
+                })
+            };
+        	
+        	// Start the SignalR connection
+        	$.connection.hub.start()
+        	.done(function () {
+        		console.log("Connected to hub");
+        		
+        		// Set up the submit button to send data to hub
+        		$('#submitResponseForm').submit(function (e) {
+                            e.preventDefault();
+                            console.log("Submit button has been clicked");
+                            let quizId = $('#availableQuizzesDropDown').val();
+                            let txtResponse = $('#txtResponse');
+                            
+                            participate.server.submitResponse(quizId, txtResponse.val());
+                            
+                            // Clear the answer box and set focus
+                            txtResponse.val('').focus();
+                        });
+        		
+        	    participate.server.getOwnUserId()
+        	        .done(function (userId) {
+        	            console.log("Got user ID:");
+        	            console.log(userId);
+                    })
+                    .fail(function (e) {
+                        console.log(e);	
+                    });
+        		
+            })
+            .fail(function (e){
+                console.log(e);	
+            });
+        	
+        });
+    
+        function dropDownOnChange() {
+            // Get the current game state (round and question number)
+            let selectedQuizId = $('#availableQuizzesDropDown').val();
+            $.ajax({
+                type: 'GET',
+                url: '/api/gameState/GetCurrentQuestion',
+                data: {
+                    quizId: selectedQuizId
+                },
+                success: function (question) {
+                    let $txtCurrentQuestion = $('#txtCurrentQuestion');
+                    if (question !== null) {
+                        $txtCurrentQuestion.text('Round ' + question.Round + ' Question ' + question.QuestionNumber);
+                    } else {
+                        $txtCurrentQuestion.text('');
+                    }
+                    
+                    // Get participant information for current question
+                    getParticipantsForQuestion(question.Id)
+                    
+                },
+                error: function () {
+                    console.log("Error fetching current question for quiz");
+                }
+            });
+        }
+        
+        // Get participant information for given question
+        function getParticipantsForQuestion(questionId){
+            $.ajax({
+                type: 'GET',
+                url: '/api/question/participants',
+                data: {
+                    questionId: questionId
+                },
+                success: function (participants) {
+                    console.log("participants");
+                    console.log(participants);
+
+                    // Populate the list of participants
+                    $('#participantsList').empty().append(
+                        participants.map(participant =>
+                            (participant.HasAnswered) ? ('<li class="list-group-item list-group-item-success">' + participant.Name + '</li>') :
+                            ('<li class="list-group-item">' + participant.Name + '</li>')
+                        )
+                    );
+                },
+                error: function () {
+                    console.log("Error fetching participants for question");
+                }
+            });
+        }
+        
+    </script>
+}
