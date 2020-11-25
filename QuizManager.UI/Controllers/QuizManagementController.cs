@@ -1,4 +1,6 @@
 ﻿using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using QuizManager.Data.Factories;
 
 namespace QuizManager.UI.Controllers
 {
@@ -7,8 +9,11 @@ namespace QuizManager.UI.Controllers
         // GET: QuizManagement
         public ActionResult Index()
         {
+            var quizRepo = QuizRepositoryFactory.GetRepository();
+            var quizzes = quizRepo.GetQuizzesForUser(User.Identity.GetUserId());
+
             // Shows a list of their quizzes
-            return View();
+            return View(quizzes);
         }
 
         [HttpGet]
@@ -17,10 +22,10 @@ namespace QuizManager.UI.Controllers
             return View();
         }
 
-        // [HttpGet]
-        // public ActionResult QuizDetails()
-        // {
-        //     // return View();
-        // }
+        [HttpGet]
+        public ActionResult QuizDetails(int quizId)
+        {
+            return View();
+        }
     }
 }

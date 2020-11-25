@@ -33,3 +33,7 @@ textarea {
 .sidenav ul {
     list-style: none;
 }
+
+.sidenav-link {
+    color: #d6d6d6;
+}

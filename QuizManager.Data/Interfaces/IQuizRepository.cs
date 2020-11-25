@@ -11,6 +11,9 @@ namespace QuizManager.Data.Interfaces
 
         IEnumerable<Participant> GetParticipantsOfQuiz(int questionId);
 
+        // Get a list of quizzes where the user is the host
+        IEnumerable<Quiz> GetQuizzesForUser(string userId);
+
         int AddQuiz(Quiz quiz);
     }
 }

@@ -31,6 +31,16 @@ namespace QuizManager.Data.Dapper
             }
         }
 
+        public IEnumerable<Quiz> GetQuizzesForUser(string userId)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                var parameters = new {userId = userId};
+                const string sql = "SELECT id, hostId, name, startDate From quiz where hostId=@userId";
+                return conn.Query<Quiz>(sql, parameters);
+            }
+        }
+
         public int AddQuiz(Quiz quiz)
         {
             using (var conn = new SqlConnection(Settings.GetConnectionString()))
