@@ -191,37 +191,37 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\BundleConfig.cs"/>
-    <Compile Include="App_Start\FilterConfig.cs"/>
-    <Compile Include="App_Start\IdentityConfig.cs"/>
-    <Compile Include="App_Start\RouteConfig.cs"/>
-    <Compile Include="App_Start\Startup.Auth.cs"/>
-    <Compile Include="App_Start\WebApiConfig.cs"/>
-    <Compile Include="Controllers\AccountController.cs"/>
-    <Compile Include="Controllers\HomeController.cs"/>
-    <Compile Include="Controllers\ManageController.cs"/>
-    <Compile Include="Controllers\ParticipateApiController.cs"/>
-    <Compile Include="Controllers\ParticipateController.cs"/>
-    <Compile Include="Controllers\QuizManagementApiController.cs"/>
-    <Compile Include="Controllers\QuizManagementController.cs"/>
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Hubs\GameStateHub.cs"/>
-    <Compile Include="Hubs\ParticipateHub.cs"/>
-    <Compile Include="Migrations\202011231327372_init.cs"/>
-    <Compile Include="Migrations\202011231327372_init.Designer.cs">
-      <DependentUpon>202011231327372_init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs"/>
-    <Compile Include="Models\AccountViewModels.cs"/>
-    <Compile Include="Models\CreateQuizModel.cs"/>
-    <Compile Include="Models\IdentityModels.cs"/>
-    <Compile Include="Models\ManageViewModels.cs"/>
-    <Compile Include="Models\ParticipateViewModel.cs"/>
-    <Compile Include="Models\QuizDetailsViewModel.cs"/>
-    <Compile Include="Properties\AssemblyInfo.cs"/>
-    <Compile Include="Startup.cs"/>
+      <Compile Include="App_Start\BundleConfig.cs"/>
+      <Compile Include="App_Start\FilterConfig.cs"/>
+      <Compile Include="App_Start\IdentityConfig.cs"/>
+      <Compile Include="App_Start\RouteConfig.cs"/>
+      <Compile Include="App_Start\Startup.Auth.cs"/>
+      <Compile Include="App_Start\WebApiConfig.cs"/>
+      <Compile Include="Controllers\AccountController.cs"/>
+      <Compile Include="Controllers\HomeController.cs"/>
+      <Compile Include="Controllers\ManageController.cs"/>
+      <Compile Include="Controllers\ParticipateApiController.cs"/>
+      <Compile Include="Controllers\ParticipateController.cs"/>
+      <Compile Include="Controllers\QuizManagementApiController.cs"/>
+      <Compile Include="Controllers\QuizManagementController.cs"/>
+      <Compile Include="Global.asax.cs">
+          <DependentUpon>Global.asax</DependentUpon>
+      </Compile>
+      <Compile Include="Hubs\GameStateHub.cs"/>
+      <Compile Include="Hubs\ParticipateHub.cs"/>
+      <Compile Include="Migrations\202011231327372_init.cs"/>
+      <Compile Include="Migrations\202011231327372_init.Designer.cs">
+          <DependentUpon>202011231327372_init.cs</DependentUpon>
+      </Compile>
+      <Compile Include="Migrations\Configuration.cs"/>
+      <Compile Include="Models\AccountViewModels.cs"/>
+      <Compile Include="Models\CreateQuizModel.cs"/>
+      <Compile Include="Models\IdentityModels.cs"/>
+      <Compile Include="Models\ManageViewModels.cs"/>
+      <Compile Include="Models\ParticipateViewModel.cs"/>
+      <Compile Include="Models\QuizDetailsViewModel.cs"/>
+      <Compile Include="Properties\AssemblyInfo.cs"/>
+      <Compile Include="Startup.cs"/>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -273,6 +273,7 @@
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
     <Content Include="Scripts\popper.min.js" />
+      <Content Include="Scripts\sharedSignalr.js"/>
     <Content Include="Scripts\src\index.js" />
     <Content Include="Scripts\src\methods\defaults.js" />
     <Content Include="Scripts\src\methods\destroy.js" />
@@ -338,57 +339,57 @@
     <Content Include="Scripts\src\utils\setupEventListeners.js" />
     <Content Include="Scripts\umd\popper-utils.js" />
     <Content Include="Scripts\umd\popper-utils.min.js" />
-    <Content Include="Scripts\umd\popper.js" />
-    <Content Include="Scripts\umd\popper.min.js" />
-    <Content Include="Views\QuizManagement\_SideNavPartial.cshtml"/>
-    <Content Include="Web.config" />
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Views\Web.config"/>
-    <Content Include="Views\_ViewStart.cshtml"/>
-    <Content Include="Views\Shared\Error.cshtml"/>
-    <Content Include="Views\Shared\_Layout.cshtml"/>
-    <Content Include="Views\Home\About.cshtml"/>
-    <Content Include="Views\Home\Contact.cshtml"/>
-    <Content Include="Views\Home\Index.cshtml"/>
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml"/>
-    <Content Include="Views\Account\ConfirmEmail.cshtml"/>
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml"/>
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml"/>
-    <Content Include="Views\Account\ForgotPassword.cshtml"/>
-    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml"/>
-    <Content Include="Views\Account\Login.cshtml"/>
-    <Content Include="Views\Account\Register.cshtml"/>
-    <Content Include="Views\Account\ResetPassword.cshtml"/>
-    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml"/>
-    <Content Include="Views\Account\SendCode.cshtml"/>
-    <Content Include="Views\Account\VerifyCode.cshtml"/>
-    <Content Include="Views\Manage\AddPhoneNumber.cshtml"/>
-    <Content Include="Views\Manage\ChangePassword.cshtml"/>
-    <Content Include="Views\Manage\Index.cshtml"/>
-    <Content Include="Views\Manage\ManageLogins.cshtml"/>
-    <Content Include="Views\Manage\SetPassword.cshtml"/>
-    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml"/>
-    <Content Include="Views\Shared\Lockout.cshtml"/>
-    <Content Include="Views\Shared\_LoginPartial.cshtml"/>
-    <Content Include="Scripts\umd\popper.min.js.map"/>
-    <Content Include="Scripts\umd\popper.js.map"/>
-    <Content Include="Scripts\umd\popper.js.flow"/>
-    <Content Include="Scripts\umd\popper-utils.min.js.map"/>
-    <Content Include="Scripts\umd\popper-utils.js.map"/>
-    <Content Include="Scripts\README.md"/>
-    <Content Include="Scripts\popper.min.js.map"/>
-    <Content Include="Scripts\popper.js.map"/>
-    <Content Include="Scripts\popper-utils.min.js.map"/>
-    <Content Include="Scripts\popper-utils.js.map"/>
-    <Content Include="Views\Participate\Index.cshtml"/>
-    <Content Include="Views\QuizManagement\Index.cshtml"/>
-    <Content Include="Views\QuizManagement\CreateQuiz.cshtml"/>
-    <Content Include="Views\QuizManagement\QuizDetails.cshtml"/>
+      <Content Include="Scripts\umd\popper.js"/>
+      <Content Include="Scripts\umd\popper.min.js"/>
+      <Content Include="Views\QuizManagement\_SideNavPartial.cshtml"/>
+      <Content Include="Web.config"/>
+      <Content Include="Web.Debug.config">
+          <DependentUpon>Web.config</DependentUpon>
+      </Content>
+      <Content Include="Web.Release.config">
+          <DependentUpon>Web.config</DependentUpon>
+      </Content>
+      <Content Include="Views\Web.config"/>
+      <Content Include="Views\_ViewStart.cshtml"/>
+      <Content Include="Views\Shared\Error.cshtml"/>
+      <Content Include="Views\Shared\_Layout.cshtml"/>
+      <Content Include="Views\Home\About.cshtml"/>
+      <Content Include="Views\Home\Contact.cshtml"/>
+      <Content Include="Views\Home\Index.cshtml"/>
+      <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml"/>
+      <Content Include="Views\Account\ConfirmEmail.cshtml"/>
+      <Content Include="Views\Account\ExternalLoginConfirmation.cshtml"/>
+      <Content Include="Views\Account\ExternalLoginFailure.cshtml"/>
+      <Content Include="Views\Account\ForgotPassword.cshtml"/>
+      <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml"/>
+      <Content Include="Views\Account\Login.cshtml"/>
+      <Content Include="Views\Account\Register.cshtml"/>
+      <Content Include="Views\Account\ResetPassword.cshtml"/>
+      <Content Include="Views\Account\ResetPasswordConfirmation.cshtml"/>
+      <Content Include="Views\Account\SendCode.cshtml"/>
+      <Content Include="Views\Account\VerifyCode.cshtml"/>
+      <Content Include="Views\Manage\AddPhoneNumber.cshtml"/>
+      <Content Include="Views\Manage\ChangePassword.cshtml"/>
+      <Content Include="Views\Manage\Index.cshtml"/>
+      <Content Include="Views\Manage\ManageLogins.cshtml"/>
+      <Content Include="Views\Manage\SetPassword.cshtml"/>
+      <Content Include="Views\Manage\VerifyPhoneNumber.cshtml"/>
+      <Content Include="Views\Shared\Lockout.cshtml"/>
+      <Content Include="Views\Shared\_LoginPartial.cshtml"/>
+      <Content Include="Scripts\umd\popper.min.js.map"/>
+      <Content Include="Scripts\umd\popper.js.map"/>
+      <Content Include="Scripts\umd\popper.js.flow"/>
+      <Content Include="Scripts\umd\popper-utils.min.js.map"/>
+      <Content Include="Scripts\umd\popper-utils.js.map"/>
+      <Content Include="Scripts\README.md"/>
+      <Content Include="Scripts\popper.min.js.map"/>
+      <Content Include="Scripts\popper.js.map"/>
+      <Content Include="Scripts\popper-utils.min.js.map"/>
+      <Content Include="Scripts\popper-utils.js.map"/>
+      <Content Include="Views\Participate\Index.cshtml"/>
+      <Content Include="Views\QuizManagement\Index.cshtml"/>
+      <Content Include="Views\QuizManagement\CreateQuiz.cshtml"/>
+      <Content Include="Views\QuizManagement\QuizDetails.cshtml"/>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

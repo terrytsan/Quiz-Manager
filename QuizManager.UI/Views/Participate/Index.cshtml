@@ -12,21 +12,11 @@
         <form id="submitResponseForm" class="col-md-8">
             <div class="form-group">
                 @Html.LabelFor(m => m.SelectedQuiz, new {@class = "control-label"})
-                @Html.DropDownListFor(m => m.SelectedQuiz, Model.AvailableQuizzes, new {id = "availableQuizzesDropDown", @class = "form-control", @onChange = "dropDownOnChange()"})
+                @Html.DropDownListFor(m => m.SelectedQuiz, Model.AvailableQuizzes, new {id = "availableQuizzesDropDown", @class = "form-control"})
             </div>
-            @if (Model.CurrentQuestion != null)
-            {
-                <p id="txtCurrentQuestion">Round @Model.CurrentQuestion.Round Question @Model.CurrentQuestion.QuestionNumber</p>
-                @Html.Hidden("questionId", Model.CurrentQuestion.Id)
-            }
-            else if (Model.SelectedQuiz != 0)
-            {
-                <p id="txtCurrentQuestion" class="text-danger">Error getting current question.</p>
-            }
-            else
-            {
-                <p id="txtCurrentQuestion"> </p>
-            }
+
+            <p id="txtCurrentQuestion"> </p>
+            @* @Html.Hidden("questionId", "1") *@
 
             <div class="form-group">
                 <label>Answer</label>
@@ -48,9 +38,13 @@
 {
     @Scripts.Render("~/bundles/signalr")
     @Scripts.Render("/signalr/hubs")
+    @Scripts.Render("~/bundles/sharedUpdates")
     <script type="text/javascript">
         $(function () {
-        	var participate = $.connection.participateHub;
+        	let availableQuizzesDropDown = $('#availableQuizzesDropDown');
+        	let participate = $.connection.participateHub;
+        	let gameStateHub = $.connection.gameStateHub;
+        	let questionId = 0;
         	
         	// Create a function that the hub will call to update participants list
         	participate.client.updateParticipantsList = function (name) {
@@ -65,6 +59,8 @@
                 })
             };
         	
+        	gameStateHub.client.updateCurrentQuestionText = updateCurrentQuestion;
+        	
         	// Start the SignalR connection
         	$.connection.hub.start()
         	.done(function () {
@@ -74,10 +70,9 @@
         		$('#submitResponseForm').submit(function (e) {
                             e.preventDefault();
                             console.log("Submit button has been clicked");
-                            let quizId = $('#availableQuizzesDropDown').val();
                             let txtResponse = $('#txtResponse');
                             
-                            participate.server.submitResponse(quizId, txtResponse.val());
+                            participate.server.submitResponse(questionId, txtResponse.val());
                             
                             // Clear the answer box and set focus
                             txtResponse.val('').focus();
@@ -91,66 +86,63 @@
                     .fail(function (e) {
                         console.log(e);	
                     });
-        		
             })
             .fail(function (e){
                 console.log(e);	
             });
         	
-        });
-    
-        function dropDownOnChange() {
-            // Get the current game state (round and question number)
-            let selectedQuizId = $('#availableQuizzesDropDown').val();
-            $.ajax({
-                type: 'GET',
-                url: '/api/gameState/GetCurrentQuestion',
-                data: {
-                    quizId: selectedQuizId
-                },
-                success: function (question) {
-                    let $txtCurrentQuestion = $('#txtCurrentQuestion');
-                    if (question !== null) {
-                        $txtCurrentQuestion.text('Round ' + question.Round + ' Question ' + question.QuestionNumber);
-                    } else {
-                        $txtCurrentQuestion.text('');
+        	availableQuizzesDropDown.change(dropDownOnChange)
+        	function dropDownOnChange() {
+                // Get the current game state (round and question number)
+                let selectedQuizId = availableQuizzesDropDown.val();
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/gameState/GetCurrentQuestion',
+                    data: {
+                        quizId: selectedQuizId
+                    },
+                    success: function (question) {
+                        let txtCurrentQuestion = $('#txtCurrentQuestion');
+                        if (question !== null) {
+                            txtCurrentQuestion.removeClass("text-danger").text('Round ' + question.Round + ' Question ' + question.QuestionNumber);
+                            // Update the questionId
+                            questionId = question.Id;
+                            // Get participant information for current question
+                            getParticipantsForQuestion(question.Id)
+                        } else {
+                            txtCurrentQuestion.addClass("text-danger").text("This quiz hasn't started yet");
+                            // Clear the list of participants
+                            $('#participantsList').empty()
+                        }
+                    },
+                    error: function () {
+                        console.log("Error fetching current question for quiz");
                     }
-                    
-                    // Get participant information for current question
-                    getParticipantsForQuestion(question.Id)
-                    
-                },
-                error: function () {
-                    console.log("Error fetching current question for quiz");
-                }
-            });
-        }
-        
-        // Get participant information for given question
-        function getParticipantsForQuestion(questionId){
-            $.ajax({
-                type: 'GET',
-                url: '/api/question/participants',
-                data: {
-                    questionId: questionId
-                },
-                success: function (participants) {
-                    console.log("participants");
-                    console.log(participants);
-
-                    // Populate the list of participants
-                    $('#participantsList').empty().append(
-                        participants.map(participant =>
-                            (participant.HasAnswered) ? ('<li class="list-group-item list-group-item-success">' + participant.Name + '</li>') :
-                            ('<li class="list-group-item">' + participant.Name + '</li>')
-                        )
-                    );
-                },
-                error: function () {
-                    console.log("Error fetching participants for question");
-                }
-            });
-        }
-        
+                });
+            }
+            
+            // Get participant information for given question
+            function getParticipantsForQuestion(questionId){
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/question/participants',
+                    data: {
+                        questionId: questionId
+                    },
+                    success: function (participants) {    
+                        // Populate the list of participants
+                        $('#participantsList').empty().append(
+                            participants.map(participant =>
+                                (participant.HasAnswered) ? ('<li class="list-group-item list-group-item-success">' + participant.Name + '</li>') :
+                                ('<li class="list-group-item">' + participant.Name + '</li>')
+                            )
+                        );
+                    },
+                    error: function () {
+                        console.log("Error fetching participants for question");
+                    }
+                });
+            }
+        });     
     </script>
 }

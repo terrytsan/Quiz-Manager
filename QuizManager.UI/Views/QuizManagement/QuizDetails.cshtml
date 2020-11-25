@@ -33,9 +33,7 @@
             End of Quiz
         </div>
     </div>
-    @* <div class="col-md-4"> *@
-    @* *@
-    @* </div> *@
+
     <div class="col-md-4">
         <div class="row mb-2">
             <div class="col">
@@ -90,20 +88,17 @@
 {
     @Scripts.Render("~/bundles/signalr")
     @Scripts.Render("/signalr/hubs")
+    @Scripts.Render("~/bundles/sharedUpdates")
     <script>
         $(function (){
         	let quizId = $('#Quiz_Id').val();
         	let gameStateHub = $.connection.gameStateHub;
         	
         	// Function that the hub will call to update the current question text
-        	gameStateHub.client.updateCurrentQuestionText = function (question) {
-                $('#txtCurrentQuestion').text('Round ' + question.Round + ' Question ' + question.QuestionNumber);
-            }
+        	gameStateHub.client.updateCurrentQuestionText = updateCurrentQuestion;
             
             // Function that the hub will call to show the end of quiz alert
-            gameStateHub.client.showEndOfQuizAlert = function () {
-        	    $('#endOfQuizAlert').show()
-            }
+            gameStateHub.client.showEndOfQuizAlert = showEndOfQuizAlert;
             
             // Start the SignalR connection
             $.connection.hub.start()
@@ -133,7 +128,6 @@
                         success: function () {
                             // Show success alert
                             console.log("Success");
-                            // $('#createQuizSuccessAlert').show();
                             // Refresh the page
                             window.location = $('#thisPageUrl').val()
                             return false;
