@@ -54,12 +54,15 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Dapper\GameStateRepositoryDapper.cs" />
+    <Compile Include="Dapper\QuestionRepositoryDapper.cs"/>
     <Compile Include="Dapper\QuizRepositoryDapper.cs" />
     <Compile Include="Dapper\ResponseRepositoryDapper.cs" />
     <Compile Include="Factories\GameStateRepositoryFactory.cs" />
+      <Compile Include="Factories\QuestionRepositoryFactory.cs"/>
     <Compile Include="Factories\QuizRepositoryFactory.cs" />
     <Compile Include="Factories\ResponseRepositoryFactory.cs" />
     <Compile Include="Interfaces\IGameStateRepository.cs" />
+      <Compile Include="Interfaces\IQuestionRepository.cs"/>
     <Compile Include="Interfaces\IQuizRepository.cs" />
     <Compile Include="Interfaces\IResponseRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

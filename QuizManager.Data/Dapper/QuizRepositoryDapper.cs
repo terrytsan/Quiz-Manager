@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using QuizManager.Data.Interfaces;
-using QuizManager.Models.Tables;
 using Dapper;
+using QuizManager.Data.Interfaces;
 using QuizManager.Models;
+using QuizManager.Models.Tables;
 
 namespace QuizManager.Data.Dapper
 {
@@ -28,6 +28,20 @@ namespace QuizManager.Data.Dapper
                 const string sql =
                     "SELECT QuizId, UserId, UserName AS name FROM AspNetUsers_quiz JOIN AspNetUsers ANU ON AspNetUsers_quiz.UserId = ANU.Id WHERE QuizId=(SELECT TOP 1 quizId FROM question where id=@questionId)";
                 return conn.Query<Participant>(sql, parameters);
+            }
+        }
+
+        public int AddQuiz(Quiz quiz)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                var parameters = new
+                {
+                    hostId = quiz.HostId, quizName = quiz.Name, startDate = quiz.StartDate,
+                };
+                const string sql =
+                    "INSERT INTO quiz (hostId, [name], startDate) OUTPUT INSERTED.Id VALUES (@hostId, @quizName, @startDate)";
+                return conn.QuerySingle<int>(sql, parameters);
             }
         }
     }

@@ -162,9 +162,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
+    <!--<Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    </Reference>-->
     <Reference Include="System.Net.Http.Formatting">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
@@ -192,26 +192,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\IdentityConfig.cs" />
-    <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\ParticipateApiController.cs" />
-    <Compile Include="Controllers\ParticipateController.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Hubs\ParticipateHub.cs" />
-    <Compile Include="Migrations\202011231327372_init.cs" />
-    <Compile Include="Migrations\202011231327372_init.Designer.cs">
-      <DependentUpon>202011231327372_init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AccountViewModels.cs" />
+      <Compile Include="App_Start\FilterConfig.cs"/>
+      <Compile Include="App_Start\IdentityConfig.cs"/>
+      <Compile Include="App_Start\RouteConfig.cs"/>
+      <Compile Include="App_Start\Startup.Auth.cs"/>
+      <Compile Include="App_Start\WebApiConfig.cs"/>
+      <Compile Include="Controllers\AccountController.cs"/>
+      <Compile Include="Controllers\HomeController.cs"/>
+      <Compile Include="Controllers\ManageController.cs"/>
+      <Compile Include="Controllers\ParticipateApiController.cs"/>
+      <Compile Include="Controllers\ParticipateController.cs"/>
+      <Compile Include="Controllers\QuizManagementApiController.cs"/>
+      <Compile Include="Controllers\QuizManagementController.cs"/>
+      <Compile Include="Global.asax.cs">
+          <DependentUpon>Global.asax</DependentUpon>
+      </Compile>
+      <Compile Include="Hubs\ParticipateHub.cs"/>
+      <Compile Include="Migrations\202011231327372_init.cs"/>
+      <Compile Include="Migrations\202011231327372_init.Designer.cs">
+          <DependentUpon>202011231327372_init.cs</DependentUpon>
+      </Compile>
+      <Compile Include="Migrations\Configuration.cs"/>
+      <Compile Include="Models\AccountViewModels.cs"/>
+      <Compile Include="Models\CreateQuizModel.cs"/>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ParticipateViewModel.cs" />
@@ -335,6 +338,7 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
+      <Content Include="Views\QuizManagement\_SideNavPartial.cshtml"/>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -370,16 +374,18 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />
-    <Content Include="Scripts\umd\popper.js.map" />
-    <Content Include="Scripts\umd\popper.js.flow" />
-    <Content Include="Scripts\umd\popper-utils.min.js.map" />
-    <Content Include="Scripts\umd\popper-utils.js.map" />
-    <Content Include="Scripts\README.md" />
-    <Content Include="Scripts\popper.min.js.map" />
-    <Content Include="Scripts\popper.js.map" />
-    <Content Include="Scripts\popper-utils.min.js.map" />
-    <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\Participate\Index.cshtml" />
+      <Content Include="Scripts\umd\popper.js.map"/>
+      <Content Include="Scripts\umd\popper.js.flow"/>
+      <Content Include="Scripts\umd\popper-utils.min.js.map"/>
+      <Content Include="Scripts\umd\popper-utils.js.map"/>
+      <Content Include="Scripts\README.md"/>
+      <Content Include="Scripts\popper.min.js.map"/>
+      <Content Include="Scripts\popper.js.map"/>
+      <Content Include="Scripts\popper-utils.min.js.map"/>
+      <Content Include="Scripts\popper-utils.js.map"/>
+      <Content Include="Views\Participate\Index.cshtml"/>
+      <Content Include="Views\QuizManagement\Index.cshtml"/>
+      <Content Include="Views\QuizManagement\CreateQuiz.cshtml"/>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

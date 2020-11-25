@@ -1,0 +1,124 @@
+﻿@{
+    ViewBag.Title = "Create Quiz";
+}
+
+<h2>Create Quiz</h2>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2">
+            @Html.Partial("_SideNavPartial")
+
+        </div>
+        <div id="mainBodyContainer" class="container col-10">
+            <div class="row">
+                <div class="col">
+                    <input id="txtQuizName" type="text" class="form-control" placeholder="Quiz Name"/>
+                    <br/>
+                    <div id="Round1Row" class="row" style="padding-bottom: 10px">
+                        <div class="col">
+                            <div id="Round1Text">Round 1</div>
+                        </div>
+                        <div class="col">
+                            <input id="Round1Questions" type="number" class="form-control" placeholder="Number of Questions"/>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center">
+                        <button id="btnAddRound" type="button" class="btn btn-primary">&#43</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex justify-content-end">
+                        <button id="btnCreateQuiz" type="button" class="btn btn-primary" style="margin-top: 40px; margin-bottom: 10px">Create Quiz</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex justify-content-end">
+                        <div id="createQuizSuccessAlert" class="alert alert-success collapse" role="alert">
+                            Successfully added quiz!
+                            @* <button type="button" class="close" data-dismiss="alert" aria-label="Close"> *@
+                            @*   <span aria-hidden="true">&times;</span> *@
+                            @* </button> *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+        	// round number : numQuestions
+        	let roundInformation = { 1: 0 };
+        	let currentRound = 1;
+        	
+            let currentRow =$('#Round1Row');
+
+            $('#btnAddRound').click(function () {
+            	currentRound++;
+            	
+            	// Clone the current row
+            	let cloned = currentRow.clone();
+
+            	// Update the id of the row
+            	cloned.attr("id", "Round" + currentRound + "Row");
+            	
+            	// Set the Round text
+            	cloned.children().first().children().attr("id", ("Round" + currentRound + "Text"));
+            	cloned.children().first().children().text("Round " + currentRound);
+            	
+            	// Set the NumQuestions text box
+            	cloned.children().eq(1).children().attr("id", ("Round" + currentRound + "Questions"));
+            	cloned.children().eq(1).children().val('');
+            	
+            	// Set the onChange listener
+            	cloned.children().eq(1).children().change(onChangeFunction);
+            	
+            	// Add the new row after the current row
+            	currentRow.after(cloned);
+            	
+            	// Update the current row
+            	currentRow=cloned; 
+            });
+            
+            $('#btnCreateQuiz').click(function () {
+            	$.ajax({
+					type: 'POST',
+					url: '/api/quizManagement/createQuiz',
+					data: {
+						RoundInfoString: JSON.stringify(roundInformation),
+						QuizName: $('#txtQuizName').val()
+					},
+					success: function () {
+						// Show success alert
+						console.log("Success");
+						$('#createQuizSuccessAlert').show();
+						
+					},
+					error: function () {
+						console.log("Error creating quiz.");
+					}
+				});
+            });
+            
+            // Handle any of the numQuestions text box changing
+            let onChangeFunction = function onNumQuestionsChange(){
+            	let round = this.id.replace("Round","").replace("Questions", "");
+            	
+                // Get the inputted number of questions and set in dict
+                roundInformation[round] = this.value;
+            };
+            
+            $('#Round1Questions').change(onChangeFunction)
+        });
+    </script>
+}

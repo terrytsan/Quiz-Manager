@@ -22,3 +22,14 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.sidenav {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 100%;
+    background-color: #343a40;
+}
+
+.sidenav ul {
+    list-style: none;
+}
