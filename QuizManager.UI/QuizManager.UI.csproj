@@ -218,6 +218,7 @@
       <Compile Include="Models\IdentityModels.cs"/>
       <Compile Include="Models\ManageViewModels.cs"/>
       <Compile Include="Models\ParticipateViewModel.cs"/>
+      <Compile Include="Models\QuizDetailsViewModel.cs"/>
       <Compile Include="Properties\AssemblyInfo.cs"/>
       <Compile Include="Startup.cs"/>
   </ItemGroup>
@@ -354,16 +355,16 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
-    <Content Include="Views\Account\ConfirmEmail.cshtml" />
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
-    <Content Include="Views\Account\ForgotPassword.cshtml" />
-    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Account\ResetPassword.cshtml" />
-    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\SendCode.cshtml" />
+      <Content Include="Views\Account\ConfirmEmail.cshtml"/>
+      <Content Include="Views\Account\ExternalLoginConfirmation.cshtml"/>
+      <Content Include="Views\Account\ExternalLoginFailure.cshtml"/>
+      <Content Include="Views\Account\ForgotPassword.cshtml"/>
+      <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml"/>
+      <Content Include="Views\Account\Login.cshtml"/>
+      <Content Include="Views\Account\Register.cshtml"/>
+      <Content Include="Views\Account\ResetPassword.cshtml"/>
+      <Content Include="Views\Account\ResetPasswordConfirmation.cshtml"/>
+      <Content Include="Views\Account\SendCode.cshtml"/>
       <Content Include="Views\Account\VerifyCode.cshtml"/>
       <Content Include="Views\Manage\AddPhoneNumber.cshtml"/>
       <Content Include="Views\Manage\ChangePassword.cshtml"/>

@@ -54,15 +54,14 @@ create table AspNetUsers_quiz
 
 create table gameState
 (
-	id int identity
-		constraint gameState_pk
-			primary key nonclustered,
-	quizId int
-		constraint gameState_quiz_id_fk
-			references quiz,
-	questionId int
-		constraint gameState_question_id_fk
-			references question
+    quizId     int not null
+        constraint gameState_pk
+            primary key nonclustered
+        constraint gameState_quiz_id_fk
+            references quiz,
+    questionId int
+        constraint gameState_question_id_fk
+            references question
 );
 
 exec sp_addextendedproperty 'MS_Description', 'Quiz Participants', 'SCHEMA', 'dbo', 'TABLE', 'AspNetUsers_quiz'

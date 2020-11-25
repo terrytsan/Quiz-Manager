@@ -47,12 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Participant.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tables\Question.cs" />
-    <Compile Include="Tables\Quiz.cs" />
-    <Compile Include="Tables\Response.cs" />
+      <Compile Include="Properties\AssemblyInfo.cs"/>
+      <Compile Include="Queries\ResponseItem.cs"/>
+      <Compile Include="Tables\Participant.cs"/>
+      <Compile Include="Tables\Question.cs"/>
+      <Compile Include="Tables\Quiz.cs"/>
+      <Compile Include="Tables\Response.cs"/>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
  </Project>

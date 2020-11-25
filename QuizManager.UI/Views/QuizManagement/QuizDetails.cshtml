@@ -1,5 +1,117 @@
-﻿@{
+﻿@using QuizManager.Models
+@model QuizManager.UI.Models.QuizDetailsViewModel
+
+@{
     ViewBag.Title = "QuizDetails";
 }
 
-<h2>Quiz Details</h2>
+<h2>@Model.Quiz.Name</h2>
+
+@Html.HiddenFor(m => m.Quiz.Id)
+@Html.Hidden("thisPageUrl", @Url.Action("QuizDetails", "QuizManagement", new {quizId = Model.Quiz.Id}, null))
+
+<div class="row">
+    <div class="col-md-8">
+        <h3>Current Status</h3>
+        @if (Model.CurrentQuestion != null)
+        {
+            <p>Round @Model.CurrentQuestion.Round Question @Model.CurrentQuestion.QuestionNumber</p>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-7">
+                    <p>This quiz has not started yet!</p>
+                </div>
+                <div class="col">
+                    <button id="btnStartQuiz" class="btn btn-primary">Start Quiz</button>
+                </div>
+            </div>
+        }
+    </div>
+    @* <div class="col-md-4"> *@
+    @* *@
+    @* </div> *@
+    <div class="col-md-4">
+        <div class="row mb-2">
+            <div class="col">
+                <h3>Participants</h3>
+            </div>
+            <div class="col d-flex justify-content-end">
+                <button class="btn btn-primary">&#43</button>
+            </div>
+
+        </div>
+
+        <ul id="participantsList" class="list-group">
+
+            @foreach (Participant participant in Model.Participants)
+            {
+                <li class="list-group-item">
+                    @participant.Name
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <h3>Responses</h3>
+        @* Table of responses *@
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Response</th>
+                <th>Timestamp</th>
+            </tr>
+
+            </thead>
+            <tbody>
+            @foreach (var response in Model.Responses)
+            {
+                <tr>
+                    <td>@response.Name</td>
+                    <td>@response.ResponseText</td>
+                    <td>@response.Timestamp</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(function (){
+        	let quizId = $('#Quiz_Id').val();
+        	
+        	// Assign onClick to StartQuiz button if it exists
+        	let btnStartQuiz = document.getElementById('btnStartQuiz')
+        	if (btnStartQuiz){
+        		btnStartQuiz.onclick = function (){
+        			console.log("Button clicked");
+        		    $.ajax({
+                        type: 'POST',
+                        url: '/api/quizManagement/startQuiz',
+                        // contentType: 'application/x-www-form-urlencoded',
+                        contentType: "application/json",
+                        data: quizId,
+                        success: function () {
+                            // Show success alert
+                            console.log("Success");
+                            // $('#createQuizSuccessAlert').show();
+                            // Refresh the page
+                            window.location = $('#thisPageUrl').val()
+                            return false;
+                        },
+                        error: function (e) {
+                            console.log("Error starting quiz." + e);
+                        }
+                    });
+                }
+            }	
+        });
+    </script>
+}

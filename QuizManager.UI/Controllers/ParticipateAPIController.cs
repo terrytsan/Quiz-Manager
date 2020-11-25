@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.AspNet.Identity;
 using System.Web.Http;
+using Microsoft.AspNet.Identity;
 using QuizManager.Data.Factories;
 using QuizManager.Models.Tables;
 
@@ -27,7 +27,7 @@ namespace QuizManager.UI.Controllers
             var quizRepo = QuizRepositoryFactory.GetRepository();
             var responseRepo = ResponseRepositoryFactory.GetRepository();
 
-            var participants = quizRepo.GetParticipantsOfQuiz(questionId).ToList();
+            var participants = quizRepo.GetParticipantsOfQuestion(questionId).ToList();
             var responses = responseRepo.GetResponsesForQuestion(questionId);
             var usersWhoResponded = responses.Select(response => response.UserId).ToList();
 

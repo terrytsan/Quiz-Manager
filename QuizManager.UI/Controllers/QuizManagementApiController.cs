@@ -43,5 +43,22 @@ namespace QuizManager.UI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Route("api/quizManagement/startQuiz")]
+        [AcceptVerbs("POST")]
+        public IHttpActionResult StartQuiz([FromBody] int quizId)
+        {
+            var gameStateRepo = GameStateRepositoryFactory.GetRepository();
+
+            try
+            {
+                gameStateRepo.InitializeCurrentQuestionForQuiz(quizId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

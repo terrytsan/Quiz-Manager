@@ -1,6 +1,7 @@
 ﻿using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using QuizManager.Data.Factories;
+using QuizManager.UI.Models;
 
 namespace QuizManager.UI.Controllers
 {
@@ -25,7 +26,17 @@ namespace QuizManager.UI.Controllers
         [HttpGet]
         public ActionResult QuizDetails(int quizId)
         {
-            return View();
+            var model = new QuizDetailsViewModel();
+
+            var quizRepo = QuizRepositoryFactory.GetRepository();
+            var gameStateRepo = GameStateRepositoryFactory.GetRepository();
+            var responseRepo = ResponseRepositoryFactory.GetRepository();
+
+            model.Quiz = quizRepo.GetQuiz(quizId);
+            model.Participants = quizRepo.GetParticipantsOfQuiz(quizId);
+            model.CurrentQuestion = gameStateRepo.GetCurrentQuestionForQuiz(quizId);
+            model.Responses = responseRepo.GetResponseItemsForQuiz(quizId);
+            return View(model);
         }
     }
 }

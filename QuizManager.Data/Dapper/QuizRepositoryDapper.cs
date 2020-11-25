@@ -9,6 +9,17 @@ namespace QuizManager.Data.Dapper
 {
     public class QuizRepositoryDapper : IQuizRepository
     {
+        public Quiz GetQuiz(int quizId)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                var parameters = new {quizId = quizId};
+                const string sql =
+                    "SELECT id, hostId, name, startDate FROM quiz WHERE id=@quizId";
+                return conn.QuerySingleOrDefault<Quiz>(sql, parameters);
+            }
+        }
+
         public IEnumerable<Quiz> GetQuizzesForParticipant(string userId)
         {
             using (var conn = new SqlConnection(Settings.GetConnectionString()))
@@ -20,13 +31,24 @@ namespace QuizManager.Data.Dapper
             }
         }
 
-        public IEnumerable<Participant> GetParticipantsOfQuiz(int questionId)
+        public IEnumerable<Participant> GetParticipantsOfQuestion(int questionId)
         {
             using (var conn = new SqlConnection(Settings.GetConnectionString()))
             {
                 var parameters = new {questionId = questionId};
                 const string sql =
                     "SELECT QuizId, UserId, UserName AS name FROM AspNetUsers_quiz JOIN AspNetUsers ANU ON AspNetUsers_quiz.UserId = ANU.Id WHERE QuizId=(SELECT TOP 1 quizId FROM question where id=@questionId)";
+                return conn.Query<Participant>(sql, parameters);
+            }
+        }
+
+        public IEnumerable<Participant> GetParticipantsOfQuiz(int quizId)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                var parameters = new {quizId = quizId};
+                const string sql =
+                    "SELECT QuizId, UserId, UserName AS name FROM AspNetUsers_quiz JOIN AspNetUsers ANU ON AspNetUsers_quiz.UserId = ANU.Id WHERE QuizId=@quizId";
                 return conn.Query<Participant>(sql, parameters);
             }
         }

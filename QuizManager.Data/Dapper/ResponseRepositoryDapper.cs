@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using Dapper;
 using QuizManager.Data.Interfaces;
+using QuizManager.Models.Queries;
 using QuizManager.Models.Tables;
 
 namespace QuizManager.Data.Dapper
@@ -31,6 +32,17 @@ namespace QuizManager.Data.Dapper
                 const string sql =
                     "SELECT id, userId, questionId, responseText, points, timestamp FROM response WHERE questionId=@questionId";
                 return conn.Query<Response>(sql, parameters);
+            }
+        }
+
+        public IEnumerable<ResponseItem> GetResponseItemsForQuiz(int quizId)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                var parameters = new {quizId = quizId};
+                const string sql =
+                    "SELECT r2.id, UserName AS [name], responseText, points, timestamp FROM quiz JOIN question q ON quiz.id = q.quizId JOIN response r2 ON q.id = r2.questionId join AspNetUsers ANU on r2.userId = ANU.Id WHERE quiz.id=@quizId ORDER BY timestamp";
+                return conn.Query<ResponseItem>(sql, parameters);
             }
         }
     }
