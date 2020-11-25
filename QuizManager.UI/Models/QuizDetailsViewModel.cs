@@ -11,6 +11,8 @@ namespace QuizManager.UI.Models
 
         public IEnumerable<Participant> Participants { get; set; }
 
+        public IEnumerable<UserShortItem> AllUsers { get; set; }
+
         public Question CurrentQuestion { get; set; }
 
         public IEnumerable<ResponseItem> Responses { get; set; }

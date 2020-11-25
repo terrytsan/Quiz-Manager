@@ -60,5 +60,22 @@ namespace QuizManager.UI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Route("api/quizManagement/addParticipant")]
+        [AcceptVerbs("POST")]
+        public IHttpActionResult AddParticipant(ParticipantModel model)
+        {
+            var quizRepo = QuizRepositoryFactory.GetRepository();
+
+            try
+            {
+                quizRepo.AddParticipantToQuiz(model.QuizId, model.UserId);
+                return Ok(quizRepo.GetParticipantsOfQuiz(model.QuizId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

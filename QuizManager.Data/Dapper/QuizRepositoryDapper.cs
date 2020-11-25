@@ -69,10 +69,24 @@ namespace QuizManager.Data.Dapper
             {
                 var parameters = new
                 {
-                    hostId = quiz.HostId, quizName = quiz.Name, startDate = quiz.StartDate,
+                    hostId = quiz.HostId, quizName = quiz.Name, startDate = quiz.StartDate
                 };
                 const string sql =
                     "INSERT INTO quiz (hostId, [name], startDate) OUTPUT INSERTED.Id VALUES (@hostId, @quizName, @startDate)";
+                return conn.QuerySingle<int>(sql, parameters);
+            }
+        }
+
+        public int AddParticipantToQuiz(int quizId, string userId)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                var parameters = new
+                {
+                    quizId = quizId, userId = userId
+                };
+                const string sql =
+                    "INSERT INTO AspNetUsers_quiz (QuizId, UserId) OUTPUT INSERTED.Id VALUES (@quizId, @userId)";
                 return conn.QuerySingle<int>(sql, parameters);
             }
         }

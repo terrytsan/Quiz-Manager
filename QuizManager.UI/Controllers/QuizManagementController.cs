@@ -29,11 +29,14 @@ namespace QuizManager.UI.Controllers
             var model = new QuizDetailsViewModel();
 
             var quizRepo = QuizRepositoryFactory.GetRepository();
+            var userRepo = UserRepositoryFactory.GetRepository();
             var gameStateRepo = GameStateRepositoryFactory.GetRepository();
             var responseRepo = ResponseRepositoryFactory.GetRepository();
 
+
             model.Quiz = quizRepo.GetQuiz(quizId);
             model.Participants = quizRepo.GetParticipantsOfQuiz(quizId);
+            model.AllUsers = userRepo.GetAllUsers();
             model.CurrentQuestion = gameStateRepo.GetCurrentQuestionForQuiz(quizId);
             model.Responses = responseRepo.GetResponseItemsForQuiz(quizId);
             return View(model);

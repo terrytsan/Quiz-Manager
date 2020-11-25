@@ -1,5 +1,4 @@
-﻿@using QuizManager.Models
-@model QuizManager.UI.Models.QuizDetailsViewModel
+﻿@model QuizManager.UI.Models.QuizDetailsViewModel
 
 @{
     ViewBag.Title = "QuizDetails";
@@ -40,14 +39,14 @@
                 <h3>Participants</h3>
             </div>
             <div class="col d-flex justify-content-end">
-                <button class="btn btn-primary">&#43</button>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#editParticipantModal">&#43</button>
             </div>
 
         </div>
 
         <ul id="participantsList" class="list-group">
 
-            @foreach (Participant participant in Model.Participants)
+            @foreach (var participant in Model.Participants)
             {
                 <li class="list-group-item">
                     @participant.Name
@@ -81,6 +80,40 @@
             }
             </tbody>
         </table>
+    </div>
+</div>
+
+<div id="editParticipantModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Participants</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @foreach (var user in Model.AllUsers)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            @user.Name
+
+                            @if (Model.Participants.Select(participant => participant.UserId).ToList().Contains(user.Id))
+                            {
+                                // Show remove button if they're already a participant
+                                <button id="@user.Id" class="btn btn-danger" onclick="handleEditParticipantBtnClick(this)">-</button>
+                            }
+                            else
+                            {
+                                // Show add button if they're not yet a participant
+                                <button id="@user.Id" class="btn btn-success" onclick="handleEditParticipantBtnClick(this)">+</button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>
 
@@ -139,5 +172,37 @@
                 }
             }	
         });
+        
+        function handleEditParticipantBtnClick(e) {
+            let userId = e.id;
+            
+            if (e.innerHTML === "+") {
+                // Add participant to quiz using quizid and user id
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/quizManagement/addParticipant',
+                    data: {
+                        UserId: userId,
+                        QuizId: $('#Quiz_Id').val()
+                    },
+                    success: function (participants) {
+                        // Call returns a list of all participants for this quiz
+                        $('#participantsList').empty().append(
+                            participants.map(participant =>
+                                ('<li class="list-group-item">' + participant.Name + '</li>')
+                            )
+                        );
+                        
+                        // Flip the button
+                        e.textContent = "-";
+                        e.classList.remove("btn-success");
+                        e.classList.add("btn-danger");
+                    },
+                    error: function (e) {
+                        console.log("Error adding participant." + e);
+                    }
+                });
+            }
+        }
     </script>
 }

@@ -57,14 +57,17 @@
     <Compile Include="Dapper\QuestionRepositoryDapper.cs"/>
     <Compile Include="Dapper\QuizRepositoryDapper.cs" />
     <Compile Include="Dapper\ResponseRepositoryDapper.cs" />
+    <Compile Include="Dapper\UserRepositoryDapper.cs"/>
     <Compile Include="Factories\GameStateRepositoryFactory.cs" />
-      <Compile Include="Factories\QuestionRepositoryFactory.cs"/>
+    <Compile Include="Factories\QuestionRepositoryFactory.cs"/>
     <Compile Include="Factories\QuizRepositoryFactory.cs" />
     <Compile Include="Factories\ResponseRepositoryFactory.cs" />
+    <Compile Include="Factories\UserRepositoryFactory.cs"/>
     <Compile Include="Interfaces\IGameStateRepository.cs" />
-      <Compile Include="Interfaces\IQuestionRepository.cs"/>
+    <Compile Include="Interfaces\IQuestionRepository.cs"/>
     <Compile Include="Interfaces\IQuizRepository.cs" />
     <Compile Include="Interfaces\IResponseRepository.cs" />
+    <Compile Include="Interfaces\IUserRepository.cs"/>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>

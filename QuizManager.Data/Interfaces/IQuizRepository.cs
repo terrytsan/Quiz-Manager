@@ -32,5 +32,10 @@ namespace QuizManager.Data.Interfaces
         IEnumerable<Quiz> GetQuizzesForUser(string userId);
 
         int AddQuiz(Quiz quiz);
+
+        /**
+         * Add a participant to the quiz
+         */
+        int AddParticipantToQuiz(int quizId, string userId);
     }
 }
