@@ -5,7 +5,7 @@
     ViewBag.Title = "QuizDetails";
 }
 
-<h2>@Model.Quiz.Name</h2>
+<h1>@Model.Quiz.Name</h1>
 
 @Html.HiddenFor(m => m.Quiz.Id)
 @Html.Hidden("thisPageUrl", @Url.Action("QuizDetails", "QuizManagement", new {quizId = Model.Quiz.Id}, null))
@@ -15,7 +15,8 @@
         <h3>Current Status</h3>
         @if (Model.CurrentQuestion != null)
         {
-            <p>Round @Model.CurrentQuestion.Round Question @Model.CurrentQuestion.QuestionNumber</p>
+            <p id="txtCurrentQuestion">Round @Model.CurrentQuestion.Round Question @Model.CurrentQuestion.QuestionNumber</p>
+            <button id="btnNextQuestion" class="btn btn-primary my-3">Next Question</button>
         }
         else
         {
@@ -28,6 +29,9 @@
                 </div>
             </div>
         }
+        <div id="endOfQuizAlert" class="alert alert-danger collapse" role="alert">
+            End of Quiz
+        </div>
     </div>
     @* <div class="col-md-4"> *@
     @* *@
@@ -82,10 +86,38 @@
     </div>
 </div>
 
-@section scripts{
+@section scripts
+{
+    @Scripts.Render("~/bundles/signalr")
+    @Scripts.Render("/signalr/hubs")
     <script>
         $(function (){
         	let quizId = $('#Quiz_Id').val();
+        	let gameStateHub = $.connection.gameStateHub;
+        	
+        	// Function that the hub will call to update the current question text
+        	gameStateHub.client.updateCurrentQuestionText = function (question) {
+                $('#txtCurrentQuestion').text('Round ' + question.Round + ' Question ' + question.QuestionNumber);
+            }
+            
+            // Function that the hub will call to show the end of quiz alert
+            gameStateHub.client.showEndOfQuizAlert = function () {
+        	    $('#endOfQuizAlert').show()
+            }
+            
+            // Start the SignalR connection
+            $.connection.hub.start()
+            .done(function () {
+            	console.log("Connected to hub");
+            
+            	$('#btnNextQuestion').click(function () {
+            		gameStateHub.server.nextQuestion(quizId);
+            		
+                });	
+            })
+            .fail (function (e){
+            	console.log(e);
+            });
         	
         	// Assign onClick to StartQuiz button if it exists
         	let btnStartQuiz = document.getElementById('btnStartQuiz')
