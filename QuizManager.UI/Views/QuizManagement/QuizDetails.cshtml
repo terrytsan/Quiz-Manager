@@ -63,6 +63,8 @@
         <table id="responsesTable" class="table table-hover">
             <thead>
             <tr>
+                <th>Round</th>
+                <th>Question</th>
                 <th>Name</th>
                 <th>Response</th>
                 <th>Timestamp</th>
@@ -73,6 +75,8 @@
             @foreach (var response in Model.Responses)
             {
                 <tr>
+                    <td>@response.Round</td>
+                    <td>@response.QuestionNumber</td>
                     <td>@response.Name</td>
                     <td>@response.ResponseText</td>
                     <td>@response.Timestamp</td>

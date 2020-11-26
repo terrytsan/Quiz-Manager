@@ -41,7 +41,7 @@ namespace QuizManager.Data.Dapper
             {
                 var parameters = new {quizId = quizId};
                 const string sql =
-                    "SELECT r2.id, UserName AS [name], responseText, points, timestamp FROM quiz JOIN question q ON quiz.id = q.quizId JOIN response r2 ON q.id = r2.questionId join AspNetUsers ANU on r2.userId = ANU.Id WHERE quiz.id=@quizId ORDER BY timestamp";
+                    "SELECT r2.id, quiz.id, round, questionNumber, UserName AS [name], responseText, points, timestamp FROM quiz JOIN question q ON quiz.id = q.quizId JOIN response r2 ON q.id = r2.questionId join AspNetUsers ANU on r2.userId = ANU.Id WHERE quiz.id=@quizId ORDER BY timestamp";
                 return conn.Query<ResponseItem>(sql, parameters);
             }
         }

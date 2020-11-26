@@ -24,6 +24,7 @@ namespace QuizManager.UI.Hubs
         public void SubmitResponse(int questionId, string responseText)
         {
             var responseRepo = ResponseRepositoryFactory.GetRepository();
+            var questionRepo = QuestionRepositoryFactory.GetRepository();
             // Add to database
             var response = new Response
             {
@@ -32,11 +33,14 @@ namespace QuizManager.UI.Hubs
             };
 
             var responseId = responseRepo.AddResponse(response);
+            var question = questionRepo.GetQuestion(questionId);
 
             // Broadcast who just submitted a response
             Clients.All.handleNewResponseSubmission(new ResponseItem
             {
-                Id = responseId, Name = Context.User.Identity.Name, ResponseText = response.ResponseText,
+                Id = responseId, QuizId = question.QuizId, Round = question.Round,
+                QuestionNumber = question.QuestionNumber, Name = Context.User.Identity.Name,
+                ResponseText = response.ResponseText,
                 Points = response.Points, Timestamp = response.Timestamp
             });
         }
