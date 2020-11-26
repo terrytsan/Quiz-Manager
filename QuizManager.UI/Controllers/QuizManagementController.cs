@@ -5,6 +5,7 @@ using QuizManager.UI.Models;
 
 namespace QuizManager.UI.Controllers
 {
+    [Authorize]
     public class QuizManagementController : Controller
     {
         // GET: QuizManagement

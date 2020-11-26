@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using QuizManager.Data.Factories;
@@ -9,6 +6,7 @@ using QuizManager.UI.Models;
 
 namespace QuizManager.UI.Controllers
 {
+    [Authorize]
     public class ParticipateController : Controller
     {
         // GET: Participate
@@ -16,9 +14,9 @@ namespace QuizManager.UI.Controllers
         {
             var model = new ParticipateViewModel();
             var quizRepo = QuizRepositoryFactory.GetRepository();
-            
+
             var availableQuizzes = quizRepo.GetQuizzesForParticipant(User.Identity.GetUserId());
-            
+
             model.AvailableQuizzes = new List<SelectListItem>
             {
                 // Add dummy value
@@ -26,10 +24,11 @@ namespace QuizManager.UI.Controllers
             };
             foreach (var quiz in availableQuizzes)
             {
-                model.AvailableQuizzes.Add(new SelectListItem{Text=quiz.Name, Value=quiz.Id.ToString()});
+                model.AvailableQuizzes.Add(new SelectListItem {Text = quiz.Name, Value = quiz.Id.ToString()});
             }
+
             model.SelectedQuiz = 0;
-            
+
             return View(model);
         }
     }

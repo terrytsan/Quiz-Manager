@@ -21,10 +21,10 @@
         </div>
         <div class="navbar-collapse collapse" id="navbarSupportedContent">
             <ul class="nav navbar-nav mr-auto">
-                <li class="nav_item">@Html.ActionLink("Participate (todo)", "Index", "Participate", null, new {@class = "nav-link"})</li>
-                <li class="nav_item">@Html.ActionLink("Create Quiz (todo)", "Index", "QuizManagement", null, new {@class = "nav-link"})</li>
-                <li class="nav_item">@Html.ActionLink("About", "About", "Home", null, new {@class = "nav-link"})</li>
-                <li class="nav_item">@Html.ActionLink("Contact", "Contact", "Home", null, new {@class = "nav-link"})</li>
+                <li class="nav_item">@Html.ActionLink("Participate", "Index", "Participate", null, new {@class = "nav-link"})</li>
+                <li class="nav_item">@Html.ActionLink("Quiz Manager", "Index", "QuizManagement", null, new {@class = "nav-link"})</li>
+                @* <li class="nav_item">@Html.ActionLink("About", "About", "Home", null, new {@class = "nav-link"})</li> *@
+                @* <li class="nav_item">@Html.ActionLink("Contact", "Contact", "Home", null, new {@class = "nav-link"})</li> *@
             </ul>
             @Html.Partial("_LoginPartial")
         </div>
