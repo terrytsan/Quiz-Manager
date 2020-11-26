@@ -18,7 +18,7 @@ namespace QuizManager.UI.Hubs
                 gameStateRepo.UpdateCurrentQuestionForQuiz(quizId, nextQuestion.Id);
 
                 // Broadcast updated gameState to clients
-                Clients.All.updateCurrentQuestionText(nextQuestion);
+                Clients.All.advanceQuestion(quizId, nextQuestion);
             }
             else
             {

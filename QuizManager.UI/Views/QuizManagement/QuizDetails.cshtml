@@ -133,7 +133,9 @@
         	let participate = $.connection.participateHub;
         	
         	// Function that the hub will call to update the current question text
-        	gameStateHub.client.updateCurrentQuestionText = updateCurrentQuestion;
+        	gameStateHub.client.advanceQuestion = function (quizId, nextQuestion){
+        	    updateCurrentQuestionText(nextQuestion);
+            };
             
             // Function that the hub will call to show the end of quiz alert
             gameStateHub.client.showEndOfQuizAlert = showEndOfQuizAlert;

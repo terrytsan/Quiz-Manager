@@ -46,6 +46,7 @@
         	let participate = $.connection.participateHub;
         	let gameStateHub = $.connection.gameStateHub;
         	let questionId = 0;
+        	let selectedQuizId = 0;
         	
         	// Create a function that the hub will call to update participants list
         	participate.client.handleNewResponseSubmission = function (responseItem) {
@@ -61,7 +62,13 @@
                 })
             };
         	
-        	gameStateHub.client.updateCurrentQuestionText = updateCurrentQuestion;
+        	gameStateHub.client.advanceQuestion = function (quizId, nextQuestion){
+        		// Update the participants list
+        		getParticipantsForQuestion(nextQuestion.Id)
+        		if (selectedQuizId == quizId) {
+        	        updateCurrentQuestionText(nextQuestion);
+                }
+            };
         	
         	// Start the SignalR connection
         	$.connection.hub.start()
@@ -96,7 +103,7 @@
         	availableQuizzesDropDown.change(dropDownOnChange)
         	function dropDownOnChange() {
                 // Get the current game state (round and question number)
-                let selectedQuizId = availableQuizzesDropDown.val();
+                selectedQuizId = availableQuizzesDropDown.val();
                 $.ajax({
                     type: 'GET',
                     url: '/api/gameState/GetCurrentQuestion',
@@ -123,7 +130,7 @@
                 });
             }
             
-            // Get participant information for given question
+            // Get participant information for given question and populate participantsList
             function getParticipantsForQuestion(questionId){
                 $.ajax({
                     type: 'GET',
