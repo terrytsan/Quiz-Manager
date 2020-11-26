@@ -41,7 +41,8 @@ namespace QuizManager.UI.Hubs
                 Id = responseId, QuizId = question.QuizId, Round = question.Round,
                 QuestionNumber = question.QuestionNumber, Name = Context.User.Identity.Name,
                 ResponseText = response.ResponseText,
-                Points = response.Points, Timestamp = response.Timestamp
+                Points = response.Points, Timestamp = response.Timestamp,
+                TimestampString = response.Timestamp.ToString("HH:mm:ss.fff")
             });
         }
     }

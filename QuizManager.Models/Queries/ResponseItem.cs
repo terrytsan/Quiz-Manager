@@ -13,5 +13,8 @@ namespace QuizManager.Models.Queries
         public string ResponseText { get; set; }
         public int Points { get; set; }
         public DateTime Timestamp { get; set; }
+
+        // String version of timestamp (only keeping millisecond precision)
+        public string TimestampString { get; set; }
     }
 }

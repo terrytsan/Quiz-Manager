@@ -39,6 +39,7 @@
     @Scripts.Render("~/bundles/signalr")
     @Scripts.Render("/signalr/hubs")
     @Scripts.Render("~/bundles/sharedUpdates")
+    @Scripts.Render("~/bundles/helperFunctions")
     <script type="text/javascript">
         $(function () {
         	let availableQuizzesDropDown = $('#availableQuizzesDropDown');
@@ -49,8 +50,11 @@
         	// Create a function that the hub will call to update participants list
         	participate.client.handleNewResponseSubmission = function (responseItem) {
         		$('#participantsList li').each(function (){
-        			if ($(this).text() === responseItem.Name){
+        			if ($(this).children(":first").children(":first").text() === responseItem.Name){
         			    $(this).addClass("list-group-item-success");
+        			    // Add the timestamp to div
+        			    $(this).children(":first").children().eq(1).text(convertDateTimeTimeOnly(responseItem.TimestampString));
+        			    
         			    // Leave the .each() 
         			    return false;
         			}
@@ -127,12 +131,21 @@
                     data: {
                         questionId: questionId
                     },
-                    success: function (participants) {    
+                    success: function (participants) {
                         // Populate the list of participants
                         $('#participantsList').empty().append(
                             participants.map(participant =>
-                                (participant.HasAnswered) ? ('<li class="list-group-item list-group-item-success">' + participant.Name + '</li>') :
-                                ('<li class="list-group-item">' + participant.Name + '</li>')
+                                (participant.HasAnswered) ? (
+                                	'<li class="list-group-item list-group-item-success">' +
+                                	 '<div class="d-flex">' +
+                                	  '<div class=mr-auto>' + participant.Name + '</div>' +
+                                	   '<div>' + convertDateTimeTimeOnly(participant.LatestAnswerTime) + '</div>' +
+                                	   '</div></li>') :
+                                ('<li class="list-group-item">' +
+                                 '<div class="d-flex">' +
+                                  '<div class=mr-auto>' + participant.Name + '</div>' +
+                                   '<div></div>' +
+                                    '</div></li>')
                             )
                         );
                     },

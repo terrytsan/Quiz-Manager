@@ -41,7 +41,10 @@ namespace QuizManager.UI.Controllers
                 // check if this participant has answered
                 if (usersWhoResponded.Contains(participant.UserId))
                 {
+                    var usersResponses = responses.Where(response => response.UserId == participant.UserId).ToList();
+                    var latestResponse = usersResponses.OrderByDescending(response => response.Timestamp).First();
                     participant.HasAnswered = true;
+                    participant.LatestAnswerTime = latestResponse.Timestamp;
                 }
             }
 

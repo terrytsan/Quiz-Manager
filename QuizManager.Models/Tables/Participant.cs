@@ -1,4 +1,6 @@
-﻿namespace QuizManager.Models
+﻿using System;
+
+namespace QuizManager.Models
 {
     public class Participant
     {
@@ -7,5 +9,6 @@
         public string UserId { get; set; }
         public string Name { get; set; }
         public bool HasAnswered { get; set; }
+        public DateTime LatestAnswerTime { get; set; }
     }
 }
