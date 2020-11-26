@@ -6,7 +6,7 @@ namespace QuizManager.Data.Interfaces
 {
     public interface IResponseRepository
     {
-        void AddResponse(Response response);
+        int AddResponse(Response response);
 
         IEnumerable<Response> GetResponsesForQuestion(int questionId);
 

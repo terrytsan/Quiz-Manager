@@ -60,7 +60,7 @@
     <div class="col-md-12">
         <h3>Responses</h3>
         @* Table of responses *@
-        <table class="table table-hover">
+        <table id="responsesTable" class="table table-hover">
             <thead>
             <tr>
                 <th>Name</th>
@@ -126,12 +126,27 @@
         $(function (){
         	let quizId = $('#Quiz_Id').val();
         	let gameStateHub = $.connection.gameStateHub;
+        	let participate = $.connection.participateHub;
         	
         	// Function that the hub will call to update the current question text
         	gameStateHub.client.updateCurrentQuestionText = updateCurrentQuestion;
             
             // Function that the hub will call to show the end of quiz alert
             gameStateHub.client.showEndOfQuizAlert = showEndOfQuizAlert;
+            
+            // Function that the hub will call when there a new response has been submitted
+            participate.client.handleNewResponseSubmission = function (responseItem) {
+            	//Create a new row (after header row)
+            	let newRow = document.getElementById('responsesTable').insertRow(1);
+            	
+            	// Fill in the cells
+            	let nameCell = newRow.insertCell(0);
+            	nameCell.appendChild(document.createTextNode(responseItem.Name))
+            	let responseCell = newRow.insertCell(1);
+            	responseCell.appendChild(document.createTextNode(responseItem.ResponseText))
+            	let timestampCell = newRow.insertCell(2);
+            	timestampCell.appendChild(document.createTextNode(responseItem.Timestamp))
+            };
             
             // Start the SignalR connection
             $.connection.hub.start()

@@ -9,7 +9,7 @@ namespace QuizManager.Data.Dapper
 {
     public class ResponseRepositoryDapper : IResponseRepository
     {
-        public void AddResponse(Response response)
+        public int AddResponse(Response response)
         {
             using (var conn = new SqlConnection(Settings.GetConnectionString()))
             {
@@ -19,8 +19,8 @@ namespace QuizManager.Data.Dapper
                     points = response.Points, timenow = response.Timestamp
                 };
                 const string sql =
-                    "INSERT INTO response (userId, questionId, responseText, points, [timestamp]) VALUES (@userId, @questionId, @responseText, @points, @timenow)";
-                conn.Execute(sql, parameters);
+                    "INSERT INTO response (userId, questionId, responseText, points, [timestamp]) OUTPUT INSERTED.id VALUES (@userId, @questionId, @responseText, @points, @timenow)";
+                return conn.QuerySingle<int>(sql, parameters);
             }
         }
 

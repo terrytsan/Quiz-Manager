@@ -47,11 +47,9 @@
         	let questionId = 0;
         	
         	// Create a function that the hub will call to update participants list
-        	participate.client.updateParticipantsList = function (name) {
-        		console.log(name+' has submitted');
+        	participate.client.handleNewResponseSubmission = function (responseItem) {
         		$('#participantsList li').each(function (){
-        			console.log($(this).text());
-        			if ($(this).text() === name){
+        			if ($(this).text() === responseItem.Name){
         			    $(this).addClass("list-group-item-success");
         			    // Leave the .each() 
         			    return false;
