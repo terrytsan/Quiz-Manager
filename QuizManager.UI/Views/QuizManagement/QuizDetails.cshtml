@@ -126,6 +126,7 @@
     @Scripts.Render("~/bundles/signalr")
     @Scripts.Render("/signalr/hubs")
     @Scripts.Render("~/bundles/sharedUpdates")
+    @Scripts.Render("~/bundles/helperFunctions")
     <script>
         $(function (){
         	let quizId = $('#Quiz_Id').val();
@@ -146,12 +147,16 @@
             	let newRow = document.getElementById('responsesTable').insertRow(1);
             	
             	// Fill in the cells
-            	let nameCell = newRow.insertCell(0);
-            	nameCell.appendChild(document.createTextNode(responseItem.Name))
-            	let responseCell = newRow.insertCell(1);
-            	responseCell.appendChild(document.createTextNode(responseItem.ResponseText))
-            	let timestampCell = newRow.insertCell(2);
-            	timestampCell.appendChild(document.createTextNode(responseItem.Timestamp))
+            	let roundCell = newRow.insertCell(0);
+            	roundCell.appendChild(document.createTextNode(responseItem.Round));
+            	let questionCell = newRow.insertCell(1);
+            	questionCell.appendChild(document.createTextNode(responseItem.QuestionNumber));
+            	let nameCell = newRow.insertCell(2);
+            	nameCell.appendChild(document.createTextNode(responseItem.Name));
+            	let responseCell = newRow.insertCell(3);
+            	responseCell.appendChild(document.createTextNode(responseItem.ResponseText));
+            	let timestampCell = newRow.insertCell(4);
+            	timestampCell.appendChild(document.createTextNode(convertDateTime(responseItem.Timestamp)));
             };
             
             // Start the SignalR connection

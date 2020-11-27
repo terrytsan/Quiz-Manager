@@ -82,7 +82,7 @@ namespace QuizManager.UI.Controllers
 
             try
             {
-                var participantScores = quizRepo.GetQuizScores(quizId).OrderBy(p => p.Score);
+                var participantScores = quizRepo.GetQuizScores(quizId).OrderByDescending(p => p.Score);
                 return Ok(participantScores);
             }
             catch (Exception ex)

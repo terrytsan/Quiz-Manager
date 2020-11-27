@@ -9,7 +9,7 @@
 <container>
     <h1>@ViewBag.UserId</h1>
     <div class="container row">
-        <form id="submitResponseForm" class="col-md-8">
+        <form id="submitResponseForm" class="col-md-4">
             <div class="form-group">
                 @Html.LabelFor(m => m.SelectedQuiz, new {@class = "control-label"})
                 @Html.DropDownListFor(m => m.SelectedQuiz, Model.AvailableQuizzes, new {id = "availableQuizzesDropDown", @class = "form-control"})
@@ -202,7 +202,7 @@
                         
                         participantScores.forEach(participantScore => {
                         	//Create a new row
-                            let newRow = document.getElementById('scoresTable').insertRow(1);
+                            let newRow = document.getElementById('scoresTable').getElementsByTagName('tbody')[0].insertRow();
 
                             // Fill in the cells
                             let nameCell = newRow.insertCell(0);

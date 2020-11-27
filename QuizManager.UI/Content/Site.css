@@ -38,6 +38,6 @@ textarea {
     color: #d6d6d6;
 }
 
-.table td {
+.table td, th {
     text-align: center;
 }
