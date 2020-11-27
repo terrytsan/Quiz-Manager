@@ -13,14 +13,17 @@
             <div class="form-group">
                 @Html.LabelFor(m => m.SelectedQuiz, new {@class = "control-label"})
                 @Html.DropDownListFor(m => m.SelectedQuiz, Model.AvailableQuizzes, new {id = "availableQuizzesDropDown", @class = "form-control"})
+                @Html.ValidationMessageFor(m => m.SelectedQuiz, "", new {@class = "text-danger"})
+
             </div>
 
             <p id="txtCurrentQuestion"> </p>
             @* @Html.Hidden("questionId", "1") *@
 
             <div class="form-group">
-                <label>Answer</label>
+                <label>Response</label>
                 @Html.TextBoxFor(m => m.Response, new {id = "txtResponse", @class = "form-control", autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Response, "", new {@class = "text-danger"})
             </div>
             <button class="btn btn-primary" type="submit">Submit</button>
             <button id="btnReset" class="btn btn-primary" type="reset">Reset</button>
@@ -58,6 +61,7 @@
     @Scripts.Render("/signalr/hubs")
     @Scripts.Render("~/bundles/sharedUpdates")
     @Scripts.Render("~/bundles/helperFunctions")
+    @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
         $(function () {
         	let availableQuizzesDropDown = $('#availableQuizzesDropDown');
@@ -95,15 +99,19 @@
         		
         		// Set up the submit button to send data to hub
         		$('#submitResponseForm').submit(function (e) {
-                            e.preventDefault();
-                            console.log("Submit button has been clicked");
-                            let txtResponse = $('#txtResponse');
-                            
-                            participate.server.submitResponse(questionId, txtResponse.val());
-                            
-                            // Clear the answer box and set focus
-                            txtResponse.val('').focus();
-                        });
+                    e.preventDefault();
+                    
+                    // Validate form
+                    if ($('#submitResponseForm').valid())
+                    {
+                        let txtResponse = $('#txtResponse');
+                                                    
+                        participate.server.submitResponse(questionId, txtResponse.val());
+                        
+                        // Clear the answer box and set focus
+                        txtResponse.val('').focus();
+                    }		           
+                });
         		
         	    participate.server.getOwnUserId()
         	        .done(function (userId) {

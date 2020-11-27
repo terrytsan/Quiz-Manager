@@ -10,9 +10,11 @@ namespace QuizManager.UI.Models
     {
         public List<SelectListItem> AvailableQuizzes { get; set; }
 
-        [Display(Name = "Quiz")] public int SelectedQuiz { get; set; }
+        [Required(ErrorMessage = "Please select a quiz.")]
+        [Display(Name = "Quiz")]
+        public int SelectedQuiz { get; set; }
 
-        public string Response { get; set; }
+        [Required] public string Response { get; set; }
 
         public Question CurrentQuestion { get; set; }
 
