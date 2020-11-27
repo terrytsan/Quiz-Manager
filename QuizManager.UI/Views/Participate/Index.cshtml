@@ -31,6 +31,24 @@
             <ul id="participantsList" class="list-group">
             </ul>
         </div>
+
+        <div class="col-md-4">
+            <table id="scoresTable" class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Score</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="2">
+                        <strong>Select a quiz to see scores</strong>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </container>
 
@@ -117,7 +135,8 @@
                             // Update the questionId
                             questionId = question.Id;
                             // Get participant information for current question
-                            getParticipantsForQuestion(question.Id)
+                            getParticipantsForQuestion(question.Id);
+                            getParticipantScores(selectedQuizId);
                         } else {
                             txtCurrentQuestion.addClass("text-danger").text("This quiz hasn't started yet");
                             // Clear the list of participants
@@ -161,6 +180,31 @@
                     }
                 });
             }
-        });     
+            
+            function getParticipantScores(quizId){
+        		$.ajax({
+                    type: 'GET',
+                    url: '/api/quiz/participantScores',
+                    data: {
+                        quizId: quizId
+                    },
+                    success: function (participantScores) {
+                    	// Empty table
+                        $('#scoresTable tbody').empty();
+                        
+                        participantScores.forEach(participantScore => {
+                        	//Create a new row
+                            let newRow = document.getElementById('scoresTable').insertRow(1);
+
+                            // Fill in the cells
+                            let nameCell = newRow.insertCell(0);
+                            nameCell.appendChild(document.createTextNode(participantScore.Name));
+                            let scoreCell = newRow.insertCell(1);
+                            scoreCell.appendChild(document.createTextNode(participantScore.Score));
+                        });
+                    }     
+                });
+            }
+        });
     </script>
 }

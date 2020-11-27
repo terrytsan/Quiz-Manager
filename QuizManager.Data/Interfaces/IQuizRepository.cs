@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using QuizManager.Models;
+using QuizManager.Models.Queries;
 using QuizManager.Models.Tables;
 
 namespace QuizManager.Data.Interfaces
@@ -19,12 +19,12 @@ namespace QuizManager.Data.Interfaces
         /**
          * Get the participants of the quiz given the question id
          */
-        IEnumerable<Participant> GetParticipantsOfQuestion(int questionId);
+        IEnumerable<QuestionParticipant> GetParticipantsOfQuestion(int questionId);
 
         /**
          * Get the participants of the quiz given the quiz id
          */
-        IEnumerable<Participant> GetParticipantsOfQuiz(int quizId);
+        IEnumerable<QuestionParticipant> GetParticipantsOfQuiz(int quizId);
 
         /**
          * Get a list of quizzes where the user is the host
@@ -37,5 +37,15 @@ namespace QuizManager.Data.Interfaces
          * Add a participant to the quiz
          */
         int AddParticipantToQuiz(int quizId, string userId);
+
+        /**
+         * Gets the total score of the user for a particular quiz
+         */
+        QuizParticipant GetParticipantQuizScore(int quizId, string userId);
+
+        /**
+         * Get scores of each participant in the quiz
+         */
+        IEnumerable<QuizParticipant> GetQuizScores(int quizId);
     }
 }

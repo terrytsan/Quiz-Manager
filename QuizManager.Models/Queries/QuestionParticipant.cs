@@ -1,8 +1,11 @@
 ﻿using System;
 
-namespace QuizManager.Models
+namespace QuizManager.Models.Queries
 {
-    public class Participant
+    /**
+     * Participant in the context of a particular question
+     */
+    public class QuestionParticipant
     {
         public int QuizId { get; set; }
         public int QuestionId { get; set; }

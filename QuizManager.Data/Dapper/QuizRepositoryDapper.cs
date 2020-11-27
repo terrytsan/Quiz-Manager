@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using Dapper;
 using QuizManager.Data.Interfaces;
-using QuizManager.Models;
+using QuizManager.Models.Queries;
 using QuizManager.Models.Tables;
 
 namespace QuizManager.Data.Dapper
@@ -31,25 +32,25 @@ namespace QuizManager.Data.Dapper
             }
         }
 
-        public IEnumerable<Participant> GetParticipantsOfQuestion(int questionId)
+        public IEnumerable<QuestionParticipant> GetParticipantsOfQuestion(int questionId)
         {
             using (var conn = new SqlConnection(Settings.GetConnectionString()))
             {
                 var parameters = new {questionId = questionId};
                 const string sql =
                     "SELECT QuizId, UserId, UserName AS name FROM AspNetUsers_quiz JOIN AspNetUsers ANU ON AspNetUsers_quiz.UserId = ANU.Id WHERE QuizId=(SELECT TOP 1 quizId FROM question where id=@questionId)";
-                return conn.Query<Participant>(sql, parameters);
+                return conn.Query<QuestionParticipant>(sql, parameters);
             }
         }
 
-        public IEnumerable<Participant> GetParticipantsOfQuiz(int quizId)
+        public IEnumerable<QuestionParticipant> GetParticipantsOfQuiz(int quizId)
         {
             using (var conn = new SqlConnection(Settings.GetConnectionString()))
             {
                 var parameters = new {quizId = quizId};
                 const string sql =
                     "SELECT QuizId, UserId, UserName AS name FROM AspNetUsers_quiz JOIN AspNetUsers ANU ON AspNetUsers_quiz.UserId = ANU.Id WHERE QuizId=@quizId";
-                return conn.Query<Participant>(sql, parameters);
+                return conn.Query<QuestionParticipant>(sql, parameters);
             }
         }
 
@@ -89,6 +90,37 @@ namespace QuizManager.Data.Dapper
                     "INSERT INTO AspNetUsers_quiz (QuizId, UserId) OUTPUT INSERTED.Id VALUES (@quizId, @userId)";
                 return conn.QuerySingle<int>(sql, parameters);
             }
+        }
+
+        public QuizParticipant GetParticipantQuizScore(int quizId, string userId)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                var parameters = new {quizId = quizId, userId = userId};
+
+                const string sql = @"SELECT Id,
+                                        @quizId        as quizId,
+                                        UserName as [name],
+                                        Score
+                                 FROM AspNetUsers
+                                        JOIN (SELECT @userId as userId, SUM(Score) as Score
+                                            FROM (SELECT MAX(points) AS 'Score'
+                                                FROM response
+                                                    JOIN question q ON response.questionId = q.id
+                                                WHERE quizId = @quizId
+                                                  AND userId = @userId
+                                                GROUP BY questionId) as highScoreEachQuestion) hs on Id = hs.userId";
+                return conn.QueryFirstOrDefault<QuizParticipant>(sql, parameters);
+            }
+        }
+
+        public IEnumerable<QuizParticipant> GetQuizScores(int quizId)
+        {
+            // Get a list of participants
+            var participants = GetParticipantsOfQuiz(quizId);
+
+            // Get the total scores for the participants
+            return participants.Select(participant => GetParticipantQuizScore(quizId, participant.UserId));
         }
     }
 }

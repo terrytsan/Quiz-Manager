@@ -37,3 +37,7 @@ textarea {
 .sidenav-link {
     color: #d6d6d6;
 }
+
+.table td {
+    text-align: center;
+}

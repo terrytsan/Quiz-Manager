@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using QuizManager.Models;
 using QuizManager.Models.Queries;
 using QuizManager.Models.Tables;
 
@@ -9,7 +8,7 @@ namespace QuizManager.UI.Models
     {
         public Quiz Quiz { get; set; }
 
-        public IEnumerable<Participant> Participants { get; set; }
+        public IEnumerable<QuestionParticipant> Participants { get; set; }
 
         public IEnumerable<UserShortItem> AllUsers { get; set; }
 

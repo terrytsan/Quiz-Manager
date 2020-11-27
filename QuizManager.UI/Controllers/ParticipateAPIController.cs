@@ -28,7 +28,7 @@ namespace QuizManager.UI.Controllers
             var responseRepo = ResponseRepositoryFactory.GetRepository();
 
             var participants = quizRepo.GetParticipantsOfQuestion(questionId).ToList();
-            var responses = responseRepo.GetResponsesForQuestion(questionId);
+            var responses = responseRepo.GetResponsesForQuestion(questionId).ToList();
             var usersWhoResponded = responses.Select(response => response.UserId).ToList();
 
             // Fill in the reset of the Participant object
@@ -67,6 +67,23 @@ namespace QuizManager.UI.Controllers
             {
                 responseRepo.AddResponse(response);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("api/quiz/participantScores")]
+        [AcceptVerbs("GET")]
+        public IHttpActionResult GetParticipantScores(int quizId)
+        {
+            var quizRepo = QuizRepositoryFactory.GetRepository();
+
+            try
+            {
+                var participantScores = quizRepo.GetQuizScores(quizId).OrderBy(p => p.Score);
+                return Ok(participantScores);
             }
             catch (Exception ex)
             {
