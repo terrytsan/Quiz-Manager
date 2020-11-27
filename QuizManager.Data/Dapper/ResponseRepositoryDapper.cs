@@ -45,5 +45,15 @@ namespace QuizManager.Data.Dapper
                 return conn.Query<ResponseItem>(sql, parameters);
             }
         }
+
+        public void UpdateResponsePoints(int responseId, int points)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                var parameters = new {responseId = responseId, points = points};
+                const string sql = "UPDATE response SET points=@points WHERE id=@responseId";
+                conn.Execute(sql, parameters);
+            }
+        }
     }
 }

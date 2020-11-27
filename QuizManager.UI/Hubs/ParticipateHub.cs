@@ -45,5 +45,17 @@ namespace QuizManager.UI.Hubs
                 TimestampString = response.Timestamp.ToString("HH:mm:ss.fff")
             });
         }
+
+        public void UpdateResponsePoints(int quizId, int responseId, int points)
+        {
+            var responseRepo = ResponseRepositoryFactory.GetRepository();
+            var quizRepo = QuizRepositoryFactory.GetRepository();
+
+            responseRepo.UpdateResponsePoints(responseId, points);
+
+            // Broadcast the new scores for the quiz
+            var participantScores = quizRepo.GetQuizScores(quizId);
+            Clients.All.updateParticipantScores(participantScores);
+        }
     }
 }

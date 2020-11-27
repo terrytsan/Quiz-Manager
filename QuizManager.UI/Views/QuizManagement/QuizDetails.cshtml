@@ -68,6 +68,7 @@
                 <th>Name</th>
                 <th>Response</th>
                 <th>Timestamp</th>
+                <th>Points</th>
             </tr>
 
             </thead>
@@ -80,6 +81,9 @@
                     <td>@response.Name</td>
                     <td>@response.ResponseText</td>
                     <td>@response.Timestamp</td>
+                    <td>
+                        <input id="@(response.Id)Score" type="number" value="@response.Points"/>
+                    </td>
                 </tr>
             }
             </tbody>
@@ -196,7 +200,16 @@
                         }
                     });
                 }
-            }	
+            }
+            
+            // Assign onChange handlers to points input box in response table
+            $('#responsesTable').find("input").change(function () {
+            	let responseId = this.id.replace('Score', '');
+            	let newPoints = this.value;
+            	
+            	// Call method in hub to update the response's points
+            	participate.server.updateResponsePoints(quizId, responseId, newPoints);
+            });
         });
         
         function handleEditParticipantBtnClick(e) {

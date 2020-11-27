@@ -120,7 +120,8 @@ namespace QuizManager.Data.Dapper
             var participants = GetParticipantsOfQuiz(quizId);
 
             // Get the total scores for the participants
-            return participants.Select(participant => GetParticipantQuizScore(quizId, participant.UserId));
+            return participants.Select(participant => GetParticipantQuizScore(quizId, participant.UserId))
+                .OrderByDescending(p => p.Score);
         }
     }
 }

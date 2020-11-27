@@ -92,6 +92,10 @@
                 }
             };
         	
+        	participate.client.updateParticipantScores = function (newScores) {
+        		refreshParticipantScoresTable(newScores);
+            };
+        	
         	// Start the SignalR connection
         	$.connection.hub.start()
         	.done(function () {
@@ -197,21 +201,26 @@
                         quizId: quizId
                     },
                     success: function (participantScores) {
-                    	// Empty table
-                        $('#scoresTable tbody').empty();
-                        
-                        participantScores.forEach(participantScore => {
-                        	//Create a new row
-                            let newRow = document.getElementById('scoresTable').getElementsByTagName('tbody')[0].insertRow();
-
-                            // Fill in the cells
-                            let nameCell = newRow.insertCell(0);
-                            nameCell.appendChild(document.createTextNode(participantScore.Name));
-                            let scoreCell = newRow.insertCell(1);
-                            scoreCell.appendChild(document.createTextNode(participantScore.Score));
-                        });
+                    	refreshParticipantScoresTable(participantScores);
                     }     
                 });
+            }
+            
+            function refreshParticipantScoresTable(scores){
+        		// Empty table
+                $('#scoresTable tbody').empty();
+                
+                scores.forEach(score => {
+                    //Create a new row
+                    let newRow = document.getElementById('scoresTable').getElementsByTagName('tbody')[0].insertRow();
+
+                    // Fill in the cells
+                    let nameCell = newRow.insertCell(0);
+                    nameCell.appendChild(document.createTextNode(score.Name));
+                    let scoreCell = newRow.insertCell(1);
+                    scoreCell.appendChild(document.createTextNode(score.Score));
+                });
+        		
             }
         });
     </script>
