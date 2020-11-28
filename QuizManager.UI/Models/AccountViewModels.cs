@@ -5,9 +5,7 @@ namespace QuizManager.UI.Models
 {
     public class ExternalLoginConfirmationViewModel
     {
-        [Required]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Required] [Display(Name = "Email")] public string Email { get; set; }
     }
 
     public class ExternalLoginListViewModel
@@ -25,12 +23,10 @@ namespace QuizManager.UI.Models
 
     public class VerifyCodeViewModel
     {
-        [Required]
-        public string Provider { get; set; }
+        [Required] public string Provider { get; set; }
 
-        [Required]
-        [Display(Name = "Code")]
-        public string Code { get; set; }
+        [Required] [Display(Name = "Code")] public string Code { get; set; }
+
         public string ReturnUrl { get; set; }
 
         [Display(Name = "Remember this browser?")]
@@ -41,24 +37,19 @@ namespace QuizManager.UI.Models
 
     public class ForgotViewModel
     {
-        [Required]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Required] [Display(Name = "Email")] public string Email { get; set; }
     }
 
     public class LoginViewModel
     {
-        [Required]
-        [Display(Name = "Username")]
-        public string UserName { get; set; }
+        [Required] [Display(Name = "Name")] public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
+        [Display(Name = "Remember me?")] public bool RememberMe { get; set; }
     }
 
     public class RegisterViewModel
@@ -78,9 +69,9 @@ namespace QuizManager.UI.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
-        
+
         [Required]
-        [Display(Name="Username")]
+        [Display(Name = "Username")]
         public string UserName { get; set; }
     }
 

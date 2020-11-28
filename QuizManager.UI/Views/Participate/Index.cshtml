@@ -88,6 +88,7 @@
         		// Update the participants list
         		getParticipantsForQuestion(nextQuestion.Id)
         		if (selectedQuizId == quizId) {
+        			questionId=nextQuestion.Id;
         	        updateCurrentQuestionText(nextQuestion);
                 }
             };

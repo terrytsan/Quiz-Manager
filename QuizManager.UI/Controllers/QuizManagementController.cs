@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Linq;
+using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using QuizManager.Data.Factories;
 using QuizManager.UI.Models;
@@ -39,7 +40,7 @@ namespace QuizManager.UI.Controllers
             model.Participants = quizRepo.GetParticipantsOfQuiz(quizId);
             model.AllUsers = userRepo.GetAllUsers();
             model.CurrentQuestion = gameStateRepo.GetCurrentQuestionForQuiz(quizId);
-            model.Responses = responseRepo.GetResponseItemsForQuiz(quizId);
+            model.Responses = responseRepo.GetResponseItemsForQuiz(quizId).OrderByDescending(item => item.Timestamp);
             return View(model);
         }
     }
