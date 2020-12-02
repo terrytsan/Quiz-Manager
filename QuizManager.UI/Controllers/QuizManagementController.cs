@@ -41,6 +41,9 @@ namespace QuizManager.UI.Controllers
             model.AllUsers = userRepo.GetAllUsers();
             model.CurrentQuestion = gameStateRepo.GetCurrentQuestionForQuiz(quizId);
             model.Responses = responseRepo.GetResponseItemsForQuiz(quizId).OrderByDescending(item => item.Timestamp);
+
+            model.IsAcceptingSubmissions = AppHelperFunctions.IsQuizAcceptingSubmissions(quizId);
+
             return View(model);
         }
     }

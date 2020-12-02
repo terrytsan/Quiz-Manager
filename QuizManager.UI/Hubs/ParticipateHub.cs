@@ -4,6 +4,7 @@ using Microsoft.AspNet.SignalR;
 using QuizManager.Data.Factories;
 using QuizManager.Models.Queries;
 using QuizManager.Models.Tables;
+using QuizManager.UI.Controllers;
 
 namespace QuizManager.UI.Hubs
 {
@@ -21,10 +22,16 @@ namespace QuizManager.UI.Hubs
             // return Clients.Caller.printUserId(Context.User.Identity.Name);
         }
 
-        public void SubmitResponse(int questionId, string responseText)
+        public bool SubmitResponse(int questionId, string responseText, int quizId)
         {
             var responseRepo = ResponseRepositoryFactory.GetRepository();
             var questionRepo = QuestionRepositoryFactory.GetRepository();
+
+            if (!AppHelperFunctions.IsQuizAcceptingSubmissions(quizId))
+            {
+                return false;
+            }
+
             // Add to database
             var response = new Response
             {
@@ -44,6 +51,8 @@ namespace QuizManager.UI.Hubs
                 Points = response.Points, Timestamp = response.Timestamp,
                 TimestampString = response.Timestamp.ToString("HH:mm:ss.fff")
             });
+
+            return true;
         }
 
         public void UpdateResponsePoints(int quizId, int responseId, int points)

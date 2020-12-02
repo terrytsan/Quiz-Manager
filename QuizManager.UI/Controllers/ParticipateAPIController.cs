@@ -20,6 +20,13 @@ namespace QuizManager.UI.Controllers
             return Ok(question);
         }
 
+        [Route("api/gameState/isAcceptingSubmissions")]
+        [AcceptVerbs("GET")]
+        public IHttpActionResult GetIsAcceptingSubmissions(int quizId)
+        {
+            return Ok(AppHelperFunctions.IsQuizAcceptingSubmissions(quizId));
+        }
+
         [Route("api/question/participants")]
         [AcceptVerbs("GET")]
         public IHttpActionResult GetParticipantsOfQuestion(int questionId)
@@ -52,6 +59,9 @@ namespace QuizManager.UI.Controllers
         }
 
 
+        /**
+         * Deprecated. Replaced with SignalR hub function
+         */
         [Route("api/participate/submit")]
         [AcceptVerbs("POST")]
         public IHttpActionResult SubmitResponse(Response submittedResponse)

@@ -10,8 +10,18 @@
 @Html.Hidden("thisPageUrl", @Url.Action("QuizDetails", "QuizManagement", new {quizId = Model.Quiz.Id}, null))
 
 <div class="row">
-    <div class="col-md-8">
-        <h3>Current Status</h3>
+    <div class="col-md-4">
+        <h3>
+            Current Status
+            @if (Model.IsAcceptingSubmissions)
+            {
+                <span id="statusBadge" class="badge badge-success ml-2">Enabled</span>
+            }
+            else
+            {
+                <span id="statusBadge" class="badge badge-danger ml-2">Disabled</span>
+            }
+        </h3>
         @if (Model.CurrentQuestion != null)
         {
             <p id="txtCurrentQuestion">Round @Model.CurrentQuestion.Round Question @Model.CurrentQuestion.QuestionNumber</p>
@@ -30,6 +40,21 @@
         }
         <div id="endOfQuizAlert" class="alert alert-danger collapse" role="alert">
             End of Quiz
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="row mb-3" id="rowToggleSubmissions">
+            @if (Model.IsAcceptingSubmissions)
+            {
+                <button id="btnToggleSubmissions" class="btn btn-danger">Disable Submissions</button>
+            }
+            else
+            {
+                <button id="btnToggleSubmissions" class="btn btn-success">Enable Submissions</button>
+            }
+            <label for="enableSubmissionsDelay" class="align-self-center mr-2 ml-4 mb-0">Delay:</label>
+            <input id="enableSubmissionsDelay" type="number" step="1" min="0" class="form-control w-25 mr-4" placeholder="(s)"/>
         </div>
     </div>
 
@@ -163,6 +188,14 @@
             	timestampCell.appendChild(document.createTextNode(convertDateTime(responseItem.Timestamp)));
             };
             
+            gameStateHub.client.handleQuizStateChange = function (quizId, newStatus) {
+                updateQuizStatusBadge(newStatus);
+            }
+            
+            gameStateHub.client.startCountdown = function (quizId, length) {
+                startCountdown(length, $('#rowToggleSubmissions'));
+            }
+            
             // Start the SignalR connection
             $.connection.hub.start()
             .done(function () {
@@ -170,12 +203,41 @@
             
             	$('#btnNextQuestion').click(function () {
             		gameStateHub.server.nextQuestion(quizId);
-            		
                 });	
+            	
+            	// Assign click handler to enable/disable submissions button
+                $('#btnToggleSubmissions').click(function () {
+                	let delay = parseInt($('#enableSubmissionsDelay').val()) * 1000;
+                	
+                	// Check if there is already a countdown occuring (button already pressed)
+                	if (!$('#cdProgressBar').length)
+                    {
+                        if (this.textContent === "Disable Submissions") {
+                            // Call hub method
+                            this.textContent = "Enable Submissions";
+                            this.classList.remove('btn-danger');
+                            this.classList.add('btn-success');
+                            setState(false, delay);
+                        } else {
+                            // Call hub method
+                            this.textContent = "Disable Submissions";
+                            this.classList.remove('btn-success');
+                            this.classList.add('btn-danger');
+                            setState(true, delay);
+                        }
+                    }
+                });
             })
             .fail (function (e){
             	console.log(e);
             });
+            
+            // Sets the state of the quiz in [delay]ms time
+            function setState(newState, time)
+            {
+            	gameStateHub.server.startTimer(quizId, time);
+            	setTimeout(function (){gameStateHub.server.setState(quizId, newState)},time);
+            }
         	
         	// Assign onClick to StartQuiz button if it exists
         	let btnStartQuiz = document.getElementById('btnStartQuiz')

@@ -15,5 +15,7 @@ namespace QuizManager.UI.Models
         public Question CurrentQuestion { get; set; }
 
         public IEnumerable<ResponseItem> Responses { get; set; }
+
+        public bool IsAcceptingSubmissions { get; set; }
     }
 }

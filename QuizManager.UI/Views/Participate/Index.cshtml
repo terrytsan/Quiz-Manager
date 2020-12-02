@@ -8,11 +8,11 @@
 
 <container>
     <h1>@ViewBag.UserId</h1>
-    <div class="container row">
+    <div class="row">
         <form id="submitResponseForm" class="col-md-4">
             <div class="form-group">
                 @Html.LabelFor(m => m.SelectedQuiz, new {@class = "control-label"})
-                @Html.DropDownListFor(m => m.SelectedQuiz, Model.AvailableQuizzes, new {id = "availableQuizzesDropDown", @class = "form-control"})
+                @Html.DropDownListFor(m => m.SelectedQuiz, Model.AvailableQuizzes, new {id = "availableQuizzesDropDown", @class = "form-control", style = "max-width:100%"})
                 @Html.ValidationMessageFor(m => m.SelectedQuiz, "", new {@class = "text-danger"})
 
             </div>
@@ -22,7 +22,7 @@
 
             <div class="form-group">
                 <label>Response</label>
-                @Html.TextBoxFor(m => m.Response, new {id = "txtResponse", @class = "form-control", autocomplete = "off"})
+                @Html.TextBoxFor(m => m.Response, new {id = "txtResponse", @class = "form-control w-100", autocomplete = "off", style = "max-width:100%"})
                 @Html.ValidationMessageFor(m => m.Response, "", new {@class = "text-danger"})
             </div>
             <button class="btn btn-primary" type="submit">Submit</button>
@@ -93,6 +93,19 @@
                 }
             };
         	
+        	gameStateHub.client.handleQuizStateChange = function (quizId, newStatus) {
+        		// Only execute if the currently selected quiz matches the state change
+        		if (selectedQuizId == quizId) {
+                	updateQuizStatusBadge(newStatus);
+				}
+            }
+            
+            gameStateHub.client.startCountdown = function (quizId, length) {
+        		if (selectedQuizId == quizId) {
+					startCountdown(length, $('#txtCurrentQuestion'));
+				}
+			}
+        	
         	participate.client.updateParticipantScores = function (newScores) {
         		refreshParticipantScoresTable(newScores);
             };
@@ -106,12 +119,34 @@
         		$('#submitResponseForm').submit(function (e) {
                     e.preventDefault();
                     
+                    // Dismiss the submission closed alert if not already
+                    let submissionsAlert = $('#submissionsClosedAlert')
+					if (submissionsAlert.length){
+                    	submissionsAlert.alert('close');
+                    }
                     // Validate form
                     if ($('#submitResponseForm').valid())
                     {
                         let txtResponse = $('#txtResponse');
                                                     
-                        participate.server.submitResponse(questionId, txtResponse.val());
+                        participate.server.submitResponse(questionId, txtResponse.val(), selectedQuizId)
+						.done(function (isSuccessful) {
+							// Clear validation messages
+							$("#submitResponseForm input").clearErrors();
+
+							if (!isSuccessful) {
+                            	$('#submitResponseForm').append(
+									'<div id="submissionsClosedAlert" class="alert alert-danger alert-dismissible fade show" role="alert">\n' +
+                            		'&#128514; Submissions are closed.' +
+                            		'<button type="button" class="close" data-dismiss="alert" aria-label="Close">\n' +
+                            		'    <span aria-hidden="true">&times;</span>\n' +
+                            		'  </button>' +
+                            		'</div>');
+                            }
+						})
+						.fail(function (e) {
+							console.log(e);
+						});
                         
                         // Clear the answer box and set focus
                         txtResponse.val('').focus();
@@ -150,6 +185,7 @@
                             // Get participant information for current question
                             getParticipantsForQuestion(question.Id);
                             getParticipantScores(selectedQuizId);
+                            getIsAcceptingSubmissions(selectedQuizId);
                         } else {
                             txtCurrentQuestion.addClass("text-danger").text("This quiz hasn't started yet");
                             // Clear the list of participants
@@ -221,8 +257,37 @@
                     let scoreCell = newRow.insertCell(1);
                     scoreCell.appendChild(document.createTextNode(score.Score));
                 });
-        		
             }
+            
+			function getIsAcceptingSubmissions(quizId) {
+				$.ajax({
+					type: 'GET',
+					url: '/api/gameState/isAcceptingSubmissions',
+					data: {
+						quizId: quizId
+					},
+					success: function (isAcceptingSubmissions) {
+						handleQuizStateChange(isAcceptingSubmissions);
+					}
+				});
+			 }
+			
+			// Updates the badge with the new state of the quiz
+			function handleQuizStateChange(newState) {
+			
+				let txtCurrentQuestion = $('#txtCurrentQuestion');
+				if (newState) {
+					txtCurrentQuestion.append('<span id="statusBadge" class="badge badge-success ml-2">Enabled</span>')
+				} else {
+					txtCurrentQuestion.append('<span id="statusBadge" class="badge badge-danger ml-2">Disabled</span>')
+				}
+			}
+			
+			$.fn.clearErrors = function () {
+				$(this).each(function() {
+					$(this).trigger('reset.unobtrusiveValidation');
+				});
+			};
         });
     </script>
 }
