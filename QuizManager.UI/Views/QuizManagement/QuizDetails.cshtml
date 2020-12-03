@@ -107,9 +107,17 @@
                     <td>@response.QuestionNumber</td>
                     <td>@response.Name</td>
                     <td>@response.ResponseText</td>
-                    <td>@response.Timestamp</td>
+                    @* Omit the date if the response was sent today *@
+                    @if (response.Timestamp.Date == DateTime.Today)
+                    {
+                        <td>@response.Timestamp.ToString("HH:mm:ss.fff")</td>
+                    }
+                    else
+                    {
+                        <td>@response.Timestamp</td>
+                    }
                     <td>
-                        <input id="@(response.Id)Score" type="number" step="1" value="@response.Points"/>
+                        <input id="@(response.Id)Score" type="number" step="1" value="@response.Points" style="max-width: 75px"/>
                     </td>
                 </tr>
             }
@@ -187,7 +195,16 @@
             	let responseCell = newRow.insertCell(3);
             	responseCell.appendChild(document.createTextNode(responseItem.ResponseText));
             	let timestampCell = newRow.insertCell(4);
-            	timestampCell.appendChild(document.createTextNode(convertDateTime(responseItem.Timestamp)));
+            	timestampCell.appendChild(document.createTextNode(convertDateTime(responseItem.TimestampString)));
+            	let pointsCell = newRow.insertCell(5);
+            	let pointsInput = document.createElement('input');
+            	pointsInput.setAttribute('id', responseItem.Id+'Score');
+            	pointsInput.setAttribute('type', 'number');
+            	pointsInput.setAttribute('step', '1');
+            	pointsInput.setAttribute('value', '0');
+            	pointsInput.setAttribute('style', 'max-width: 75px');
+            	pointsInput.onchange = handlePointsInputOnChange;
+            	pointsCell.appendChild(pointsInput);
             };
             
             gameStateHub.client.handleQuizStateChange = function (quizId, newStatus) {
@@ -213,7 +230,11 @@
             	
             	// Assign click handler to enable/disable submissions button
                 $('#btnToggleSubmissions').click(function () {
-                	let delay = parseInt($('#enableSubmissionsDelay').val()) * 1000;
+                	let enableSubmissionsDelayInput = $('#enableSubmissionsDelay');
+                	let delay = parseInt(enableSubmissionsDelayInput.val()) * 1000;
+                	
+                	// Reset the delay value
+                	enableSubmissionsDelayInput.val('');
                 	
                 	// Check if there is already a countdown occuring (button already pressed)
                 	if (!$('#cdProgressBar').length)
@@ -271,13 +292,15 @@
             }
             
             // Assign onChange handlers to points input box in response table
-            $('#responsesTable').find("input").change(function () {
-            	let responseId = this.id.replace('Score', '');
-            	let newPoints = this.value;
-            	
-            	// Call method in hub to update the response's points
-            	participate.server.updateResponsePoints(quizId, responseId, newPoints);
-            });
+            $('#responsesTable').find("input").change(handlePointsInputOnChange);
+    
+        	function handlePointsInputOnChange(){
+        		let responseId = this.id.replace('Score', '');
+                let newPoints = this.value;
+                
+                // Call method in hub to update the response's points
+                participate.server.updateResponsePoints(quizId, responseId, newPoints);
+            }
         });
         
         function handleEditParticipantBtnClick(e) {
