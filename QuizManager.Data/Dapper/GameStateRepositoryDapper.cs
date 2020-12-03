@@ -50,5 +50,16 @@ namespace QuizManager.Data.Dapper
                 return conn.QueryFirstOrDefault<Question>(sql, parameters);
             }
         }
+
+        public Question GetPreviousQuestionForQuiz(int quizId)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                var parameters = new {quizId = quizId};
+                const string sql =
+                    "SELECT id, quizId, round, questionNumber FROM (SELECT * FROM question WHERE quizId = @quizId) AS [q*]WHERE id < (SELECT questionId FROM gameState WHERE quizId = @quizId)ORDER BY round DESC, questionNumber DESC";
+                return conn.QueryFirstOrDefault<Question>(sql, parameters);
+            }
+        }
     }
 }

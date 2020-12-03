@@ -10,7 +10,7 @@ namespace QuizManager.UI.Hubs
         {
             var gameStateRepo = GameStateRepositoryFactory.GetRepository();
 
-            // Get the next question number
+            // Get the next question
             var nextQuestion = gameStateRepo.GetNextQuestionForQuiz(quizId);
 
             if (nextQuestion != null)
@@ -25,6 +25,24 @@ namespace QuizManager.UI.Hubs
             {
                 // If no more questions, show alert
                 Clients.All.showEndOfQuizAlert();
+            }
+        }
+
+        public void PrevQuestion(int quizId)
+        {
+            var gameStateRepo = GameStateRepositoryFactory.GetRepository();
+
+            // Get the previous question
+            var prevQuestion = gameStateRepo.GetPreviousQuestionForQuiz(quizId);
+
+            // Check if it's the start of the quiz
+            if (prevQuestion != null)
+            {
+                // Update the database gameState
+                gameStateRepo.UpdateCurrentQuestionForQuiz(quizId, prevQuestion.Id);
+
+                // Broadcast updated gameState to clients
+                Clients.All.advanceQuestion(quizId, prevQuestion);
             }
         }
 

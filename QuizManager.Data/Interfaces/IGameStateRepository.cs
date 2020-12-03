@@ -21,5 +21,10 @@ namespace QuizManager.Data.Interfaces
          * Gets the next question for quiz. Returns null if end of quiz
          */
         Question GetNextQuestionForQuiz(int quizId);
+
+        /**
+         * Gets the previous question for quiz. Returns null if start of quiz
+         */
+        Question GetPreviousQuestionForQuiz(int quizId);
     }
 }

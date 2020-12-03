@@ -2,8 +2,21 @@
 	$('#txtCurrentQuestion').text('Round ' + question.Round + ' Question ' + question.QuestionNumber);
 }
 
-function showEndOfQuizAlert() {
-	$('#endOfQuizAlert').show()
+/**
+ * Draws an end of quiz alert after the specified component
+ * @param afterComponent Component to insert alert after
+ */
+function showEndOfQuizAlert(afterComponent) {
+	if (!$('#endOfQuizAlert').length) {
+		afterComponent.after(
+			'<div id="endOfQuizAlert" class="alert alert-danger" role="alert">' +
+			'End of Quiz' +
+			'<button type="button" class="close" data-dismiss="alert">' +
+			'<span>&times</span>' +
+			'</button>' +
+			'</div>'
+		);
+	}
 }
 
 function updateQuizStatusBadge(newStatus) {

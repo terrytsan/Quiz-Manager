@@ -25,7 +25,12 @@
         @if (Model.CurrentQuestion != null)
         {
             <p id="txtCurrentQuestion">Round @Model.CurrentQuestion.Round Question @Model.CurrentQuestion.QuestionNumber</p>
-            <button id="btnNextQuestion" class="btn btn-primary my-3">Next Question</button>
+            <div id="rowChangeQuestion" class="row">
+                <div class="col">
+                    <button id="btnPrevQuestion" class="btn btn-primary my-3">Prev Question</button>
+                    <button id="btnNextQuestion" class="btn btn-primary my-3">Next Question</button>
+                </div>
+            </div>
         }
         else
         {
@@ -38,9 +43,6 @@
                 </div>
             </div>
         }
-        <div id="endOfQuizAlert" class="alert alert-danger collapse" role="alert">
-            End of Quiz
-        </div>
     </div>
 
     <div class="col-md-4">
@@ -168,7 +170,7 @@
             };
             
             // Function that the hub will call to show the end of quiz alert
-            gameStateHub.client.showEndOfQuizAlert = showEndOfQuizAlert;
+            gameStateHub.client.showEndOfQuizAlert = () => showEndOfQuizAlert($('#rowChangeQuestion'));
             
             // Function that the hub will call when there a new response has been submitted
             participate.client.handleNewResponseSubmission = function (responseItem) {
@@ -203,6 +205,10 @@
             
             	$('#btnNextQuestion').click(function () {
             		gameStateHub.server.nextQuestion(quizId);
+                });	
+            	
+            	$('#btnPrevQuestion').click(function () {
+            		gameStateHub.server.prevQuestion(quizId);
                 });	
             	
             	// Assign click handler to enable/disable submissions button

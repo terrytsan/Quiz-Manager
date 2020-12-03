@@ -90,6 +90,8 @@
         		if (selectedQuizId == quizId) {
         			questionId=nextQuestion.Id;
         	        updateCurrentQuestionText(nextQuestion);
+        	        //Retrieve the quiz status
+        	        getIsAcceptingSubmissions(selectedQuizId);
                 }
             };
         	
