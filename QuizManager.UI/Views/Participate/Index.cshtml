@@ -72,21 +72,12 @@
         	
         	// Create a function that the hub will call to update participants list
         	participate.client.handleNewResponseSubmission = function (responseItem) {
-        		$('#participantsList li').each(function (){
-        			if ($(this).children(":first").children(":first").text() === responseItem.Name){
-        			    $(this).addClass("list-group-item-success");
-        			    // Add the timestamp to div
-        			    $(this).children(":first").children().eq(1).text(convertDateTimeTimeOnly(responseItem.TimestampString));
-        			    
-        			    // Leave the .each() 
-        			    return false;
-        			}
-                })
+        		updateLiveParticipantResponsesList(responseItem, $('#participantsList'), true)
             };
         	
         	gameStateHub.client.advanceQuestion = function (quizId, nextQuestion){
         		// Update the participants list
-        		getParticipantsForQuestion(nextQuestion.Id)
+        		getParticipantsForQuestionAndPopulateList(nextQuestion.Id, $('#participantsList') ,true)
         		if (selectedQuizId == quizId) {
         			questionId=nextQuestion.Id;
         	        updateCurrentQuestionText(nextQuestion);
@@ -185,7 +176,7 @@
                             // Update the questionId
                             questionId = question.Id;
                             // Get participant information for current question
-                            getParticipantsForQuestion(question.Id);
+                            getParticipantsForQuestionAndPopulateList(question.Id, $('#participantsList'), true);
                             getParticipantScores(selectedQuizId);
                             getIsAcceptingSubmissions(selectedQuizId);
                         } else {
@@ -196,38 +187,6 @@
                     },
                     error: function () {
                         console.log("Error fetching current question for quiz");
-                    }
-                });
-            }
-            
-            // Get participant information for given question and populate participantsList
-            function getParticipantsForQuestion(questionId){
-                $.ajax({
-                    type: 'GET',
-                    url: '/api/question/participants',
-                    data: {
-                        questionId: questionId
-                    },
-                    success: function (participants) {
-                        // Populate the list of participants
-                        $('#participantsList').empty().append(
-                            participants.map(participant =>
-                                (participant.HasAnswered) ? (
-                                	'<li class="list-group-item list-group-item-success">' +
-                                	 '<div class="d-flex">' +
-                                	  '<div class=mr-auto>' + participant.Name + '</div>' +
-                                	   '<div>' + convertDateTimeTimeOnly(participant.LatestAnswerTime) + '</div>' +
-                                	   '</div></li>') :
-                                ('<li class="list-group-item">' +
-                                 '<div class="d-flex">' +
-                                  '<div class=mr-auto>' + participant.Name + '</div>' +
-                                   '<div></div>' +
-                                    '</div></li>')
-                            )
-                        );
-                    },
-                    error: function () {
-                        console.log("Error fetching participants for question");
                     }
                 });
             }
