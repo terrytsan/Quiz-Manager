@@ -11,8 +11,8 @@
 @Html.Hidden("thisPageUrl", @Url.Action("QuizDetails", "QuizManagement", new {quizId = Model.Quiz.Id}, null))
 
 <div class="row">
-    <div class="col-md-4">
-        <h3>
+    <div class="col-md-4 mb-4">
+        <h3 class="mb-4">
             Current Status
             @if (Model.IsAcceptingSubmissions)
             {
@@ -23,9 +23,27 @@
                 <span id="statusBadge" class="badge badge-danger ml-2">Disabled</span>
             }
         </h3>
+        <div class="row mb-3" id="rowToggleSubmissions">
+            <div class="col">
+                @if (Model.IsAcceptingSubmissions)
+                {
+                    <button id="btnToggleSubmissions" class="btn btn-danger">Disable Submissions</button>
+                }
+                else
+                {
+                    <button id="btnToggleSubmissions" class="btn btn-success">Enable Submissions</button>
+                }
+                <label for="enableSubmissionsDelay" class="align-self-center mr-2 ml-4 mb-0">Delay:</label>
+                <input id="enableSubmissionsDelay" type="number" step="1" min="0" class="form-control w-25 mr-2" placeholder="(s)" style="display: inline-block"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <h3 class="mb-4">Current Question</h3>
         @if (Model.CurrentQuestion != null)
         {
-            <p id="txtCurrentQuestion">Round @Model.CurrentQuestion.Round Question @Model.CurrentQuestion.QuestionNumber</p>
+            <div id="txtCurrentQuestion">Round @Model.CurrentQuestion.Round Question @Model.CurrentQuestion.QuestionNumber</div>
             <div id="rowChangeQuestion" class="row">
                 <div class="col">
                     <button id="btnPrevQuestion" class="btn btn-primary my-3">Prev Question</button>
@@ -47,36 +65,22 @@
     </div>
 
     <div class="col-md-4">
-        <div class="row mb-3" id="rowToggleSubmissions">
-            @if (Model.IsAcceptingSubmissions)
-            {
-                <button id="btnToggleSubmissions" class="btn btn-danger">Disable Submissions</button>
-            }
-            else
-            {
-                <button id="btnToggleSubmissions" class="btn btn-success">Enable Submissions</button>
-            }
-            <label for="enableSubmissionsDelay" class="align-self-center mr-2 ml-4 mb-0">Delay:</label>
-            <input id="enableSubmissionsDelay" type="number" step="1" min="0" class="form-control w-25 mr-4" placeholder="(s)"/>
-        </div>
-    </div>
-
-    <div class="col-md-4">
         <div class="row mb-2">
-            <div class="col-md-8">
-                <div class="row">
-                    <h3>Participants</h3>
-                    <button class="btn btn-outline-secondary ml-2" data-toggle="collapse" data-target="#participantsList">
-                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrows-expand" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z"/>
+            <div class="col d-flex flex-row">
+                <h3>Participants</h3>
+                <button class="btn btn-outline-secondary ml-3 mr-auto" data-toggle="collapse" data-target="#participantsList">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrows-expand" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z"/>
+                    </svg>
+                </button>
+                <div class="align-self-end">
+                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#editParticipantModal">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
                         </svg>
                     </button>
                 </div>
             </div>
-            <div class="col d-flex justify-content-end">
-                <button class="btn btn-primary" data-toggle="modal" data-target="#editParticipantModal">&#43</button>
-            </div>
-
         </div>
 
         <ul id="participantsList" class="list-group collapse">
@@ -155,18 +159,23 @@
                 {
                     <div class="card mb-3">
                         <div class="card-body">
-                            @user.Name
-
-                            @if (Model.Participants.Select(participant => participant.UserId).ToList().Contains(user.Id))
-                            {
-                                // Show remove button if they're already a participant
-                                <button id="@user.Id" class="btn btn-danger" onclick="handleEditParticipantBtnClick(this)">-</button>
-                            }
-                            else
-                            {
-                                // Show add button if they're not yet a participant
-                                <button id="@user.Id" class="btn btn-success" onclick="handleEditParticipantBtnClick(this)">+</button>
-                            }
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="mr-2">@user.Name</div>
+                                </div>
+                                <div class="col d-flex flex-column align-items-end">
+                                    @if (Model.Participants.Select(participant => participant.UserId).ToList().Contains(user.Id))
+                                    {
+                                        // Show remove button if they're already a participant
+                                        <button id="@user.Id" class="btn btn-danger" onclick="handleEditParticipantBtnClick(this)">-</button>
+                                    }
+                                    else
+                                    {
+                                        // Show add button if they're not yet a participant
+                                        <button id="@user.Id" class="btn btn-success" onclick="handleEditParticipantBtnClick(this)">+</button>
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -356,6 +365,28 @@
                         console.log("Error adding participant." + e);
                     }
                 });
+            }
+            else if (e.innerHTML === "-") {
+            	if (confirm("Are you sure you want to remove " + $(e).parent().prev().children().first().text() + "? This process is irreversible."))
+            	{
+                    // Remove the participant from the quiz
+                   $.ajax({
+                       type:'DELETE',
+                       url: '/api/quizManagement/removeParticipant',
+                       data: {
+                           UserId: userId,
+                           QuizId: $('#Quiz_Id').val()
+                       },
+                       success: function (){
+                           // Refresh the page
+                           window.location = $('#thisPageUrl').val()
+                           return false;
+                       },
+                       error: function (e) {
+                           console.log("Error removing participant." + e);	
+                       }
+                   });
+            	}
             }
         }
     </script>

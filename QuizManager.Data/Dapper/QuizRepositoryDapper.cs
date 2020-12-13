@@ -123,5 +123,22 @@ namespace QuizManager.Data.Dapper
             return participants.Select(participant => GetParticipantQuizScore(quizId, participant.UserId))
                 .OrderByDescending(p => p.Score);
         }
+
+        public void RemoveParticipantFromQuiz(int quizId, string userId)
+        {
+            using (var conn = new SqlConnection(Settings.GetConnectionString()))
+            {
+                // Delete from AspNetUsers_quiz (participants table)
+                var parameters = new {quizId = quizId, userId = userId};
+                const string participantSql =
+                    "DELETE p FROM AspNetUsers_quiz p WHERE userId=@userId AND QuizId=@quizId ";
+                conn.Execute(participantSql, parameters);
+
+                // Delete from response table 
+                const string responseSql =
+                    "DELETE r FROM response r JOIN question q ON r.questionId = q.id WHERE userId=@userId AND quizId=@quizId";
+                conn.Execute(responseSql, parameters);
+            }
+        }
     }
 }

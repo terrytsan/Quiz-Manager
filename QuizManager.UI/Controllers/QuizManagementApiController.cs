@@ -77,5 +77,22 @@ namespace QuizManager.UI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Route("api/quizManagement/removeParticipant")]
+        [AcceptVerbs("DELETE")]
+        public IHttpActionResult RemoveParticipant(ParticipantModel model)
+        {
+            var quizRepo = QuizRepositoryFactory.GetRepository();
+
+            try
+            {
+                quizRepo.RemoveParticipantFromQuiz(model.QuizId, model.UserId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

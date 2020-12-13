@@ -47,5 +47,10 @@ namespace QuizManager.Data.Interfaces
          * Get scores of each participant in the quiz
          */
         IEnumerable<QuizParticipant> GetQuizScores(int quizId);
+
+        /**
+         * Remove a participant from the quiz. This will also remove any responses made by the participant.
+         */
+        void RemoveParticipantFromQuiz(int quizId, string userId);
     }
 }
