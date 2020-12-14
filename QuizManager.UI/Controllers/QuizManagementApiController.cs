@@ -70,6 +70,7 @@ namespace QuizManager.UI.Controllers
             try
             {
                 quizRepo.AddParticipantToQuiz(model.QuizId, model.UserId);
+                // Return a list of all participants of the quiz
                 return Ok(quizRepo.GetParticipantsOfQuiz(model.QuizId));
             }
             catch (Exception ex)

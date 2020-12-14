@@ -61,3 +61,24 @@ function startCountdown(startingTime, afterComponent) {
 		}
 	}, updateFreq);
 }
+
+/**
+ * Updates the table with the participant's scores.
+ * @param tableId ID of the table to update
+ * @param scores the scores
+ */
+function refreshParticipantScoresTable(tableId, scores) {
+	// Empty table
+	$('#' + tableId + ' tbody').empty();
+
+	scores.forEach(score => {
+		//Create a new row
+		let newRow = document.getElementById(tableId).getElementsByTagName('tbody')[0].insertRow();
+
+		// Fill in the cells
+		let nameCell = newRow.insertCell(0);
+		nameCell.appendChild(document.createTextNode(score.Name));
+		let scoreCell = newRow.insertCell(1);
+		scoreCell.appendChild(document.createTextNode(score.Score));
+	});
+}

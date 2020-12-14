@@ -8,7 +8,7 @@ namespace QuizManager.UI.Models
     {
         public Quiz Quiz { get; set; }
 
-        public IEnumerable<QuestionParticipant> Participants { get; set; }
+        public IEnumerable<QuizParticipant> Participants { get; set; }
 
         public IEnumerable<UserShortItem> AllUsers { get; set; }
 

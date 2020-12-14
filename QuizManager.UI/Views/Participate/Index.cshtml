@@ -100,7 +100,7 @@
 			}
         	
         	participate.client.updateParticipantScores = function (newScores) {
-        		refreshParticipantScoresTable(newScores);
+        		refreshParticipantScoresTable('scoresTable', newScores);
             };
         	
         	// Start the SignalR connection
@@ -199,24 +199,8 @@
                         quizId: quizId
                     },
                     success: function (participantScores) {
-                    	refreshParticipantScoresTable(participantScores);
+                    	refreshParticipantScoresTable('scoresTable', participantScores);
                     }     
-                });
-            }
-            
-            function refreshParticipantScoresTable(scores){
-        		// Empty table
-                $('#scoresTable tbody').empty();
-                
-                scores.forEach(score => {
-                    //Create a new row
-                    let newRow = document.getElementById('scoresTable').getElementsByTagName('tbody')[0].insertRow();
-
-                    // Fill in the cells
-                    let nameCell = newRow.insertCell(0);
-                    nameCell.appendChild(document.createTextNode(score.Name));
-                    let scoreCell = newRow.insertCell(1);
-                    scoreCell.appendChild(document.createTextNode(score.Score));
                 });
             }
             

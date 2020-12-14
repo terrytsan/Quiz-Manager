@@ -68,7 +68,7 @@
         <div class="row mb-2">
             <div class="col d-flex flex-row">
                 <h3>Participants</h3>
-                <button class="btn btn-outline-secondary ml-3 mr-auto" data-toggle="collapse" data-target="#participantsList">
+                <button class="btn btn-outline-secondary ml-3 mr-auto" data-toggle="collapse" data-target="#scoresTable">
                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrows-expand" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z"/>
                     </svg>
@@ -83,14 +83,19 @@
             </div>
         </div>
 
-        <ul id="participantsList" class="list-group collapse">
-            @foreach (var participant in Model.Participants)
-            {
-                <li class="list-group-item">
-                    @participant.Name
-                </li>
-            }
-        </ul>
+        <div id="scoresTable" class="table collapse mb-1">
+            <table style="width: 100%">
+                <tbody>
+                @foreach (var participant in Model.Participants)
+                {
+                    <tr>
+                        <td>@participant.Name</td>
+                        <td>@participant.Score</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <hr>
@@ -237,6 +242,10 @@
                 updateLiveParticipantResponsesList(responseItem, $('#liveParticipantResponseList'), false);
             };
             
+            participate.client.updateParticipantScores = function (newScores) {
+                refreshParticipantScoresTable('scoresTable', newScores);
+            };
+            
             gameStateHub.client.handleQuizStateChange = function (quizId, newStatus) {
                 updateQuizStatusBadge(newStatus);
             }
@@ -348,13 +357,9 @@
                         UserId: userId,
                         QuizId: $('#Quiz_Id').val()
                     },
-                    success: function (participants) {
-                        // Call returns a list of all participants for this quiz
-                        $('#participantsList').empty().append(
-                            participants.map(participant =>
-                                ('<li class="list-group-item">' + participant.Name + '</li>')
-                            )
-                        );
+                    success: function () {
+                    	// Update the live participants list
+                        getParticipantsForQuestionAndPopulateList($('#CurrentQuestion_Id').val(), $('#liveParticipantResponseList'), false);
                         
                         // Flip the button
                         e.textContent = "-";

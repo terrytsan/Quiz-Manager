@@ -98,7 +98,7 @@ namespace QuizManager.Data.Dapper
             {
                 var parameters = new {quizId = quizId, userId = userId};
 
-                const string sql = @"SELECT Id,
+                const string sql = @"SELECT Id AS UserId,
                                         @quizId        as quizId,
                                         UserName as [name],
                                         Score

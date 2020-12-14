@@ -37,7 +37,7 @@ namespace QuizManager.UI.Controllers
 
 
             model.Quiz = quizRepo.GetQuiz(quizId);
-            model.Participants = quizRepo.GetParticipantsOfQuiz(quizId);
+            model.Participants = quizRepo.GetQuizScores(quizId);
             model.AllUsers = userRepo.GetAllUsers();
             model.CurrentQuestion = gameStateRepo.GetCurrentQuestionForQuiz(quizId);
             model.Responses = responseRepo.GetResponseItemsForQuiz(quizId).OrderByDescending(item => item.Timestamp);
