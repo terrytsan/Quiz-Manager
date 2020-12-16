@@ -283,16 +283,16 @@
     <Content Include="Scripts\src\methods\destroy.js" />
     <Content Include="Scripts\src\methods\disableEventListeners.js" />
     <Content Include="Scripts\src\methods\enableEventListeners.js" />
-    <Content Include="Scripts\src\methods\placements.js" />
-    <Content Include="Scripts\src\methods\update.js" />
-    <Content Include="Scripts\src\modifiers\applyStyle.js" />
-    <Content Include="Scripts\src\modifiers\arrow.js" />
-    <Content Include="Scripts\src\modifiers\computeStyle.js" />
-    <Content Include="Scripts\src\modifiers\flip.js" />
-    <Content Include="Scripts\src\modifiers\hide.js" />
-    <Content Include="Scripts\src\modifiers\index.js" />
-    <Content Include="Scripts\src\modifiers\inner.js" />
-    <Content Include="Scripts\src\modifiers\keepTogether.js" />
+    <Content Include="Scripts\src\methods\placements.js"/>
+    <Content Include="Scripts\src\methods\update.js"/>
+    <Content Include="Scripts\src\modifiers\applyStyle.js"/>
+    <Content Include="Scripts\src\modifiers\arrow.js"/>
+    <Content Include="Scripts\src\modifiers\computeStyle.js"/>
+    <Content Include="Scripts\src\modifiers\flip.js"/>
+    <Content Include="Scripts\src\modifiers\hide.js"/>
+    <Content Include="Scripts\src\modifiers\index.js"/>
+    <Content Include="Scripts\src\modifiers\inner.js"/>
+    <Content Include="Scripts\src\modifiers\keepTogether.js"/>
     <Content Include="Scripts\src\modifiers\offset.js"/>
     <Content Include="Scripts\src\modifiers\preventOverflow.js"/>
     <Content Include="Scripts\src\modifiers\shift.js"/>
@@ -345,7 +345,6 @@
     <Content Include="Scripts\umd\popper-utils.min.js"/>
     <Content Include="Scripts\umd\popper.js"/>
     <Content Include="Scripts\umd\popper.min.js"/>
-    <Content Include="Views\QuizManagement\_SideNavPartial.cshtml"/>
     <Content Include="Web.config"/>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -2,24 +2,20 @@
     ViewBag.Title = "Create Quiz";
 }
 
-<div class="container-fluid">
-    <h2>Create Quiz</h2>
-    <div class="row">
-        <div class="col-2">
-            @Html.Partial("_SideNavPartial")
-
-        </div>
-        <div id="mainBodyContainer" class="container col-10">
+<h2>Create Quiz</h2>
+<div class="row">
+    <div id="mainBodyContainer" class="container col">
+        <form id="createQuizForm">
             <div class="row">
                 <div class="col">
-                    <input id="txtQuizName" type="text" class="form-control" placeholder="Quiz Name"/>
+                    <input id="txtQuizName" type="text" class="form-control" placeholder="Quiz Name" required/>
                     <br/>
                     <div id="Round1Row" class="row" style="padding-bottom: 10px">
                         <div class="col">
                             <div id="Round1Text">Round 1</div>
                         </div>
                         <div class="col">
-                            <input id="Round1Questions" type="number" class="form-control" placeholder="Number of Questions"/>
+                            <input id="Round1Questions" type="number" min="1" class="form-control" placeholder="No. Questions" required/>
                         </div>
                     </div>
 
@@ -31,28 +27,16 @@
             <div class="row">
                 <div class="col">
                     <div class="d-flex justify-content-end">
-                        <button id="btnCreateQuiz" type="button" class="btn btn-primary" style="margin-top: 40px; margin-bottom: 10px">Create Quiz</button>
+                        <button id="btnCreateQuiz" type="submit" class="btn btn-primary" style="margin-top: 40px; margin-bottom: 10px">Create Quiz</button>
                     </div>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col">
-                    <div class="d-flex justify-content-end">
-                        <div id="createQuizSuccessAlert" class="alert alert-success collapse" role="alert">
-                            Successfully added quiz!
-                            @* <button type="button" class="close" data-dismiss="alert" aria-label="Close"> *@
-                            @*   <span aria-hidden="true">&times;</span> *@
-                            @* </button> *@
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
 
 @section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
         $(function () {
         	// round number : numQuestions
@@ -88,24 +72,35 @@
             	currentRow=cloned; 
             });
             
-            $('#btnCreateQuiz').click(function () {
-            	$.ajax({
-					type: 'POST',
-					url: '/api/quizManagement/createQuiz',
-					data: {
-						RoundInfoString: JSON.stringify(roundInformation),
-						QuizName: $('#txtQuizName').val()
-					},
-					success: function () {
-						// Show success alert
-						console.log("Success");
-						$('#createQuizSuccessAlert').show();
-						
-					},
-					error: function () {
-						console.log("Error creating quiz.");
-					}
-				});
+            $('#btnCreateQuiz').click(function (e) {
+            	e.preventDefault();
+            	
+            	// Validate form
+            	if ($('#createQuizForm').get(0).reportValidity()) {
+                	$.ajax({
+                		type: 'POST',
+                		url: '/api/quizManagement/createQuiz',
+                		data: {
+                			RoundInfoString: JSON.stringify(roundInformation),
+                			QuizName: $('#txtQuizName').val()
+                		},
+                		success: function () {
+                			// Show success alert
+                			$('#createQuizForm').append(
+                				`<div id="createQuizSuccessAlert" class="alert alert-success" role="alert">
+                					Successfully created quiz!
+									Click @Html.ActionLink("here", "Index", "QuizManagement") to view your quizzes. 
+                					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                				  		<span aria-hidden="true">&times;</span>
+                					</button>
+                				</div>`
+                			);
+                		},
+                		error: function () {
+                			console.log("Error creating quiz.");
+                		}
+                	});
+                }
             });
             
             // Handle any of the numQuestions text box changing
