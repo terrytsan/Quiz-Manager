@@ -107,46 +107,86 @@
     </div>
 </div>
 <hr>
+@* List of Responses *@
 <div class="row">
     <div class="col-md-12">
-        <h3>Responses</h3>
-        @* Table of responses *@
-        <table id="responsesTable" class="table table-hover">
-            <thead>
-            <tr>
-                <th>Round</th>
-                <th>Question</th>
-                <th>Name</th>
-                <th>Response</th>
-                <th>Timestamp</th>
-                <th>Points</th>
-            </tr>
-
-            </thead>
-            <tbody>
+        <div class="row mb-2">
+            <div class="col">
+                <h3 class="m-0">Responses</h3>
+            </div>
+            <div class="col my-auto d-flex flex-column align-items-end">
+                <div>
+                    <input class="form-check-input" type="checkbox" value="" id="chkResponsesForSelectedQuestionOnly">
+                    <label class="form-check-label" for="chkResponsesForSelectedQuestionOnly">This Question Only</label>
+                </div>
+            </div>
+        </div>
+        <div id="responsesList">
             @foreach (var response in Model.Responses)
             {
-                <tr>
-                    <td>@response.Round</td>
-                    <td>@response.QuestionNumber</td>
-                    <td>@response.Name</td>
-                    <td>@response.ResponseText</td>
-                    @* Omit the date if the response was sent today *@
-                    @if (response.Timestamp.Date == DateTime.Today)
-                    {
-                        <td>@response.Timestamp.ToString("HH:mm:ss.fff")</td>
-                    }
-                    else
-                    {
-                        <td>@response.Timestamp</td>
-                    }
-                    <td>
-                        <input id="@(response.Id)Score" type="number" step="1" value="@response.Points" style="max-width: 75px"/>
-                    </td>
-                </tr>
+                <div class="card mb-3">
+                    <div class="card-body p-3">
+                        <div class="container-fluid p-0">
+                            <div class="row no-gutters">
+                                <div class="col-8">
+                                    <div class="row">
+                                        <div class="col-sm-4 no-gutters">
+                                            <h5 id="@(response.Id)ResponseName" class="card-title m-0">@response.Name</h5>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div id="@(response.Id)ResponseQues" class="card-title mb-0">Round @response.Round Question @response.QuestionNumber</div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div id="@(response.Id)ResponseTime" class="card-title mb-2">
+                                                @if (response.Timestamp.Date == DateTime.Today)
+                                                {
+                                                    @response.Timestamp.ToString("HH:mm:ss.fff")
+                                                }
+                                                else
+                                                {
+                                                    @response.Timestamp
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2 my-auto">
+                                    <div class="flex d-flex justify-content-center">
+                                        <h3>
+                                            <span id="@(response.Id)ScoreBadge" class="badge badge-primary">@response.Points</span>
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="col p-0 my-auto">
+                                    <div class="row d-flex">
+                                        <div class="col-md-6">
+                                            <button id="@(response.Id)ScoreUpBtn" class="btn btn-sm btn-outline-success mb-2 float-right">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button id="@(response.Id)ScoreDownBtn" class="btn btn-sm btn-outline-danger float-right">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div id="@(response.Id)ResponseText">@response.ResponseText</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             }
-            </tbody>
-        </table>
+        </div>
     </div>
 </div>
 
@@ -208,6 +248,8 @@
         	    questionIdField.val(nextQuestion.Id);
         	    // Update the awaiting participants list
         	    getParticipantsForQuestionAndPopulateList(questionIdField.val(), $('#liveParticipantResponseList'), false);
+        	    // Filter responses
+        	    filterResponsesThisQuestionOnly();
             };
             
             // Function that the hub will call to show the end of quiz alert
@@ -215,29 +257,37 @@
             
             // Function that the hub will call when there a new response has been submitted
             participate.client.handleNewResponseSubmission = function (responseItem) {
-            	//Create a new row (after header row)
-            	let newRow = document.getElementById('responsesTable').insertRow(1);
+            	// Clone the first card in the list
+            	let responseList = $('#responsesList');
+            	let firstCard = responseList.children(":first");
             	
-            	// Fill in the cells
-            	let roundCell = newRow.insertCell(0);
-            	roundCell.appendChild(document.createTextNode(responseItem.Round));
-            	let questionCell = newRow.insertCell(1);
-            	questionCell.appendChild(document.createTextNode(responseItem.QuestionNumber));
-            	let nameCell = newRow.insertCell(2);
-            	nameCell.appendChild(document.createTextNode(responseItem.Name));
-            	let responseCell = newRow.insertCell(3);
-            	responseCell.appendChild(document.createTextNode(responseItem.ResponseText));
-            	let timestampCell = newRow.insertCell(4);
-            	timestampCell.appendChild(document.createTextNode(convertDateTime(responseItem.TimestampString)));
-            	let pointsCell = newRow.insertCell(5);
-            	let pointsInput = document.createElement('input');
-            	pointsInput.setAttribute('id', responseItem.Id+'Score');
-            	pointsInput.setAttribute('type', 'number');
-            	pointsInput.setAttribute('step', '1');
-            	pointsInput.setAttribute('value', '0');
-            	pointsInput.setAttribute('style', 'max-width: 75px');
-            	pointsInput.onchange = handlePointsInputOnChange;
-            	pointsCell.appendChild(pointsInput);
+            	let newCard = firstCard.clone();
+            	let name = newCard.find("[id*='ResponseName']");
+            	name.attr('id', responseItem.Id + 'ResponseName');
+            	name.text(responseItem.Name);
+            	let timestamp = newCard.find("[id*='ResponseTime']");
+            	timestamp.attr('id', responseItem.Id + 'ResponseTime');
+            	timestamp.text(convertDateTime(responseItem.TimestampString));
+            	let question = newCard.find("[id*='ResponseQues']");
+            	question.attr('id', responseItem.Id + 'ResponseQues');
+            	question.text('Round ' + responseItem.Round + ' Question ' + responseItem.QuestionNumber);
+            	let responseText = newCard.find("[id*='ResponseText']");
+            	responseText.attr('id', responseItem.Id + 'ResponseText');
+            	responseText.text(responseItem.ResponseText);
+            	let scoreBadge = newCard.find("[id*='ScoreBadge']")
+                scoreBadge.attr('id', responseItem.Id + 'ScoreBadge');
+                scoreBadge.text(0);
+            	let scoreUpBtn = newCard.find("[id*='ScoreUpBtn']")
+            	scoreUpBtn.attr('id', responseItem.Id + 'ScoreUpBtn');
+            	scoreUpBtn.click(handleResponsePointsBtnClick);
+            	let scoreDownBtn = newCard.find("[id*='ScoreDownBtn']")
+                scoreDownBtn.attr('id', responseItem.Id + 'ScoreDownBtn');
+            	scoreDownBtn.click(handleResponsePointsBtnClick);
+
+            	// Add the new card to the top of the list
+            	responseList.prepend(newCard);
+            	
+            	filterResponsesThisQuestionOnly();
             	
                 updateLiveParticipantResponsesList(responseItem, $('#liveParticipantResponseList'), false);
             };
@@ -330,17 +380,52 @@
                 }
             }
             
-            // Assign onChange handlers to points input box in response table
-            $('#responsesTable').find("input").change(handlePointsInputOnChange);
-    
-        	function handlePointsInputOnChange(){
-        		let responseId = this.id.replace('Score', '');
-                let newPoints = this.value;
-                
-                // Call method in hub to update the response's points
-                participate.server.updateResponsePoints(quizId, responseId, newPoints);
+            // Assign onCLick handlers to up/down buttons in list of response cards
+            $('#responsesList').find('button').click(handleResponsePointsBtnClick);
+        	
+        	function handleResponsePointsBtnClick() {
+        		// Check which button was clicked
+            	if (this.id.includes('Up')) {
+            		let responseId = this.id.replace('ScoreUpBtn', '');
+            		let scoreBadge = $('#' + responseId + 'ScoreBadge');
+            		
+            		// Increment the value
+            		let newPoints = parseInt(scoreBadge.text()) + 1;
+            		scoreBadge.text(newPoints);
+            		// Call method in hub to update the response's points
+            		participate.server.updateResponsePoints(quizId, responseId, newPoints);
+            	} else if (this.id.includes('Down')) {
+            		let responseId = this.id.replace('ScoreDownBtn', '');
+            		let scoreBadge = $('#' + responseId + 'ScoreBadge');
+            		
+            		// Decrement the value if > 0
+            		if (parseInt(scoreBadge.text()) !== 0) {
+            			let newPoints = parseInt(scoreBadge.text()) - 1;
+            			scoreBadge.text(newPoints);
+            			// Call method in hub to update the response's points
+            			participate.server.updateResponsePoints(quizId, responseId, newPoints);
+            		}
+            	}
             }
-            
+        	
+            // Set on change handler for filter for question checkbox
+        	$('#chkResponsesForSelectedQuestionOnly').change(filterResponsesThisQuestionOnly);
+        	
+        	function filterResponsesThisQuestionOnly() {
+            	let checkbox = $('#chkResponsesForSelectedQuestionOnly');
+            	$('#responsesList').children().each(function () {
+            		// Get the question of the response 
+            		let question = $(this).find("[id*='ResponseQues']");
+                    
+            		// Filter the responses
+            		if (checkbox.is(":checked") && $('#txtCurrentQuestion').text() !== question.text()) {
+            			$(this).hide();
+            		} else {
+            			$(this).show();
+            		}
+            	});
+            }
+        	
             // Populate the live participant responses list 
             getParticipantsForQuestionAndPopulateList(questionIdField.val(), $('#liveParticipantResponseList'), false);
         });
