@@ -24,7 +24,7 @@
             }
         </h3>
         <div class="row mb-3" id="rowToggleSubmissions">
-            <div class="col">
+            <div class="col-7">
                 @if (Model.IsAcceptingSubmissions)
                 {
                     <button id="btnToggleSubmissions" class="btn btn-danger">Disable Submissions</button>
@@ -33,8 +33,25 @@
                 {
                     <button id="btnToggleSubmissions" class="btn btn-success">Enable Submissions</button>
                 }
-                <label for="enableSubmissionsDelay" class="align-self-center mr-2 ml-4 mb-0">Delay:</label>
-                <input id="enableSubmissionsDelay" type="number" step="1" min="0" class="form-control w-25 mr-2" placeholder="(s)" style="display: inline-block"/>
+            </div>
+            <div class="col d-flex flex-row">
+                <input id="enableSubmissionsDelay" type="number" step="1" min="0" class="form-control align-self-end" placeholder="Delay (s)" style="width: 85%"/>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col">
+                <div>
+                    <input type="checkbox" id="chkResetDelay"/>
+                    <label class="form-label-check" for="chkResetDelay">Reset delay each time</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="chkNoEnableDelay" checked/>
+                    <label class="form-label-check" for="chkNoEnableDelay">No delay on enable</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="chkAutoEnableOnNextQ" checked/>
+                    <label class="form-label-check" for="chkAutoEnableOnNextQ">Auto enable on next question</label>
+                </div>
             </div>
         </div>
     </div>
@@ -311,6 +328,11 @@
             
             	$('#btnNextQuestion').click(function () {
             		gameStateHub.server.nextQuestion(quizId);
+            		// Enable submissions if checkbox checked
+            		let btnToggleSubmissions = document.getElementById('btnToggleSubmissions');
+            		if ($('#chkAutoEnableOnNextQ').is(":checked") && btnToggleSubmissions.textContent === "Enable Submissions") {
+                        toggleSubmissions.call(btnToggleSubmissions);
+                    }
                 });	
             	
             	$('#btnPrevQuestion').click(function () {
@@ -319,15 +341,21 @@
             	
             	// Assign click handler to enable/disable submissions button
                 $('#btnToggleSubmissions').click(function () {
-                	let enableSubmissionsDelayInput = $('#enableSubmissionsDelay');
-                	let delay = parseInt(enableSubmissionsDelayInput.val()) * 1000;
-                	
-                	// Reset the delay value
-                	enableSubmissionsDelayInput.val('');
-                	
-                	// Check if there is already a countdown occuring (button already pressed)
-                	if (!$('#cdProgressBar').length)
-                    {
+                	// Call function passing button as context
+                	toggleSubmissions.call(document.getElementById('btnToggleSubmissions'));
+                });
+                
+                function toggleSubmissions() {
+                    let enableSubmissionsDelayInput = $('#enableSubmissionsDelay');
+                    let delay = parseInt(enableSubmissionsDelayInput.val()) * 1000;
+                    
+                    // Reset the delay value
+                    if ($('#chkResetDelay').is(":checked")) {
+                        enableSubmissionsDelayInput.val('');
+                    }
+                    
+                    // Check if there is already a countdown occuring (button already pressed)
+                    if (!$('#cdProgressBar').length) {
                         if (this.textContent === "Disable Submissions") {
                             // Call hub method
                             this.textContent = "Enable Submissions";
@@ -339,10 +367,10 @@
                             this.textContent = "Disable Submissions";
                             this.classList.remove('btn-success');
                             this.classList.add('btn-danger');
-                            setState(true, delay);
+                            ($('#chkNoEnableDelay').is(":checked")) ? setState(true, NaN) : setState(true, delay);
                         }
                     }
-                });
+                }
             })
             .fail (function (e){
             	console.log(e);
