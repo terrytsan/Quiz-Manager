@@ -100,5 +100,26 @@ namespace QuizManager.UI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Route("api/quiz/responses")]
+        [AcceptVerbs("GET")]
+        public IHttpActionResult GetQuizResponses(int quizId)
+        {
+            // Return error if quiz is still enabled
+            if (AppHelperFunctions.IsQuizAcceptingSubmissions(quizId))
+            {
+                return BadRequest("Quiz still enabled.");
+            }
+
+            var responseRepo = ResponseRepositoryFactory.GetRepository();
+
+            var responses = responseRepo.GetResponseItemsForQuiz(quizId).OrderByDescending(item => item.Timestamp);
+            foreach (var responseItem in responses)
+            {
+                responseItem.TimestampString = responseItem.Timestamp.ToString("HH:mm:ss.fff");
+            }
+
+            return Ok(responses);
+        }
     }
 }

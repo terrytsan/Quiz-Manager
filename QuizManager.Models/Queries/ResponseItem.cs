@@ -5,8 +5,9 @@ namespace QuizManager.Models.Queries
     public class ResponseItem
     {
         public int Id { get; set; }
-
         public int QuizId { get; set; }
+        public string UserId { get; set; }
+        public int QuestionId { get; set; }
         public int Round { get; set; }
         public int QuestionNumber { get; set; }
         public string Name { get; set; }

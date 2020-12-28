@@ -41,3 +41,37 @@ textarea {
 .table td, th {
     text-align: center;
 }
+
+.fade-in-up {
+    animation: fadeInUp 0.3s;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
+
+.fade-in-down {
+    animation: fadeInDown 0.3s;
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}

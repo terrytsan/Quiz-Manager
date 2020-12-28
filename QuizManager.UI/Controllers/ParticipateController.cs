@@ -15,7 +15,9 @@ namespace QuizManager.UI.Controllers
             var model = new ParticipateViewModel();
             var quizRepo = QuizRepositoryFactory.GetRepository();
 
-            var availableQuizzes = quizRepo.GetQuizzesForParticipant(User.Identity.GetUserId());
+            var userId = User.Identity.GetUserId();
+            ViewBag.UserId = userId;
+            var availableQuizzes = quizRepo.GetQuizzesForParticipant(userId);
 
             model.AvailableQuizzes = new List<SelectListItem>
             {

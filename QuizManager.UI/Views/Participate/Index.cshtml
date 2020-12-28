@@ -6,8 +6,9 @@
 
 <h2>Participate</h2>
 
+@Html.Hidden("userId", (object) ViewBag.UserId)
+
 <container>
-    <h1>@ViewBag.UserId</h1>
     <div class="row">
         <form id="submitResponseForm" class="col-md-4">
             <div class="form-group">
@@ -55,6 +56,36 @@
     </div>
 </container>
 
+<div id="showResponsesModal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Responses</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div>
+                            <input type="checkbox" id="chkFilterCurrentQuestion" checked/>
+                            <label class="form-label-check" for="chkFilterCurrentQuestion">Current question only</label>
+                        </div>
+
+                        <div>
+                            <input type="checkbox" id="chkFilterCurrentUser"/>
+                            <label class="form-label-check" for="chkFilterCurrentUser">Show only mine</label>
+                        </div>
+
+                    </div>
+                </div>
+                <div id="responsesList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts
 {
     @Scripts.Render("~/bundles/signalr")
@@ -69,6 +100,8 @@
         	let gameStateHub = $.connection.gameStateHub;
         	let questionId = 0;
         	let selectedQuizId = 0;
+        	let chkFilterCurrentQuestion = $('#chkFilterCurrentQuestion');
+			let chkFilterCurrentUser = $('#chkFilterCurrentUser');
         	
         	// Create a function that the hub will call to update participants list
         	participate.client.handleNewResponseSubmission = function (responseItem) {
@@ -90,6 +123,7 @@
         		// Only execute if the currently selected quiz matches the state change
         		if (selectedQuizId == quizId) {
                 	updateQuizStatusBadge(newStatus);
+                	toggleShowResponsesBtn(newStatus);
 				}
             }
             
@@ -102,6 +136,10 @@
         	participate.client.updateParticipantScores = function (newScores) {
         		refreshParticipantScoresTable('scoresTable', newScores);
             };
+        	
+        	participate.client.updateResponseScore = function (responseId, newScore) {
+        		updateResponseScore(responseId, newScore);
+			};
         	
         	// Start the SignalR connection
         	$.connection.hub.start()
@@ -212,21 +250,134 @@
 						quizId: quizId
 					},
 					success: function (isAcceptingSubmissions) {
-						handleQuizStateChange(isAcceptingSubmissions);
+						initializeStatusBadge(isAcceptingSubmissions);
 					}
 				});
 			 }
 			
-			// Updates the badge with the new state of the quiz
-			function handleQuizStateChange(newState) {
-			
+			// Initialize the status badge
+			function initializeStatusBadge(newState) {
 				let txtCurrentQuestion = $('#txtCurrentQuestion');
+				txtCurrentQuestion.append('<span id="statusBadge" class="badge ml-2"></span>');
+				txtCurrentQuestion.append('<a href="#" id="btnShowResponses" class="badge badge-info ml-2 fade-in-and-out" data-toggle="modal" data-target="#showResponsesModal">Show Responses</a>');
+				let statusBadge = $('#statusBadge');
+				
 				if (newState) {
-					txtCurrentQuestion.append('<span id="statusBadge" class="badge badge-success ml-2">Enabled</span>')
+					statusBadge.addClass('badge-success');
+					statusBadge.text('Enabled');
 				} else {
-					txtCurrentQuestion.append('<span id="statusBadge" class="badge badge-danger ml-2">Disabled</span>')
+					statusBadge.addClass('badge-danger');
+					statusBadge.text('Disabled');
+				}
+				toggleShowResponsesBtn(newState);
+			}
+			
+			// Reveal/hide show responses button depending on quiz status
+			function toggleShowResponsesBtn(quizState) {
+        		let btnShowResponses = $('#btnShowResponses');
+        		if (quizState) {
+        			btnShowResponses.hide();
+				} else {
+					btnShowResponses.show();
 				}
 			}
+			
+			// Called when modal opens
+			$('#showResponsesModal').on('show.bs.modal', function() {
+				let responsesList = $('#responsesList');
+				responsesList.empty();
+				$.ajax({
+					type: 'GET',
+					url: '/api/quiz/responses',
+					data: {
+						quizId: selectedQuizId
+					},
+					success: function (responses) {						
+						responses.forEach(function (response) {
+							responsesList.append(
+								`<div id="${response.Id}ResponseCard" class="card mb-3">
+									<div class="card-body p-3">
+										<input type="hidden" id="">
+										<div class="row">
+											<div class="col-9">
+												<div class="row">
+													<div id="${response.UserId}ResponseUser" class="col">${response.Name}</div>
+    												<div class="col">${response.TimestampString}</div>
+    												<div id="${response.QuestionId}ResponseQues" class="col">Round ${response.Round} Question ${response.QuestionNumber}</div>
+												</div>
+											</div>
+											<div class="col my-auto">
+												<div class="flex d-flex justify-content-center">
+													<h3>
+														<span class="badge badge-primary">
+															<div id="${response.Id}ResponseScoreBadgeText">${response.Points}</div>
+														</span>
+													</h3>
+												</div>
+											</div>
+										</div>
+										<div class="row mt-2">
+											<div class="col">
+												<div>${response.ResponseText}</div>
+											</div>
+										</div>
+									</div>
+								</div>`
+							);
+						});
+						filterResponsesList();
+					},
+					error: function (xhr) {
+						let errorMessage = JSON.parse(xhr.responseText).Message;
+						if (errorMessage === "Quiz still enabled.") {
+							responsesList.append('<div class="alert alert-danger" style="text-align: center">Quiz is enabled. Ask how to disable submissions to view responses.</div>')
+						}
+					}
+				});
+			});
+        	
+        	chkFilterCurrentQuestion.change(filterResponsesList);
+        	chkFilterCurrentUser.change(filterResponsesList);
+        	
+        	// Applies the filters in the check boxes
+        	function filterResponsesList() {
+        		$('#responsesList').children().each(function () {
+        			$(this).show();
+        			let responseQuesId = parseInt($(this).find("[id*='ResponseQues']").attr('id').replace('ResponseQues', ''));
+        			let responseUserId = $(this).find("[id*='ResponseUser']").attr('id').replace('ResponseUser', '');
+        			
+        			if (chkFilterCurrentQuestion.is(":checked") && responseQuesId !== questionId) {
+						$(this).hide();
+					}
+        			if (chkFilterCurrentUser.is(":checked") && responseUserId !== $('#userId').val()) {
+						$(this).hide();
+					}
+				});
+			}
+			
+			// Update the response's score in the modal
+			function updateResponseScore(responseId, newScore) {
+            	// Try and get the response Card
+            	let scoreBadge = $('#' + responseId + 'ResponseScoreBadgeText');
+            	if (scoreBadge.length !== 0) {
+            		let currentPoints = parseInt(scoreBadge.text());
+            		let newPoints = parseInt(newScore);
+            
+            		// Check which animation to use
+            		scoreBadge.removeClass('fade-in-up fade-in-down');
+            		if (newPoints > currentPoints) {
+            			setTimeout(function () {
+            				scoreBadge.addClass('fade-in-down');
+            				scoreBadge.text(newPoints);
+            			}, 1);
+            		} else {
+            			setTimeout(function () {
+            				scoreBadge.addClass('fade-in-up');
+            				scoreBadge.text(newPoints);
+            			}, 1);
+            		}
+            	}
+            }
 			
 			$.fn.clearErrors = function () {
 				$(this).each(function() {

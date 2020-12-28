@@ -45,11 +45,10 @@ namespace QuizManager.UI.Hubs
             // Broadcast who just submitted a response
             Clients.All.handleNewResponseSubmission(new ResponseItem
             {
-                Id = responseId, QuizId = question.QuizId, Round = question.Round,
-                QuestionNumber = question.QuestionNumber, Name = Context.User.Identity.Name,
-                ResponseText = response.ResponseText,
-                Points = response.Points, Timestamp = response.Timestamp,
-                TimestampString = response.Timestamp.ToString("HH:mm:ss.fff")
+                Id = responseId, QuizId = question.QuizId, UserId = Context.User.Identity.GetUserId(),
+                QuestionId = questionId, Round = question.Round, QuestionNumber = question.QuestionNumber,
+                Name = Context.User.Identity.Name, ResponseText = response.ResponseText, Points = response.Points,
+                Timestamp = response.Timestamp, TimestampString = response.Timestamp.ToString("HH:mm:ss.fff")
             });
 
             return true;
@@ -61,6 +60,9 @@ namespace QuizManager.UI.Hubs
             var quizRepo = QuizRepositoryFactory.GetRepository();
 
             responseRepo.UpdateResponsePoints(responseId, points);
+
+            // Broadcast singular updated response's score
+            Clients.All.updateResponseScore(responseId, points);
 
             // Broadcast the new scores for the quiz
             var participantScores = quizRepo.GetQuizScores(quizId);
