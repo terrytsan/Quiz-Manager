@@ -141,7 +141,7 @@
         <div id="responsesList">
             @foreach (var response in Model.Responses)
             {
-                <div class="card mb-3">
+                <div class="card mb-3" style="@(response.Id == -1 ? "display:none;" : "")">
                     <div class="card-body p-3">
                         <div class="container-fluid p-0">
                             <div class="row no-gutters">
@@ -397,6 +397,8 @@
                         success: function () {
                             // Show success alert
                             console.log("Success");
+                            // Update participant page
+                            gameStateHub.server.startQuiz(quizId);
                             // Refresh the page
                             window.location = $('#thisPageUrl').val()
                             return false;
@@ -444,9 +446,10 @@
             	$('#responsesList').children().each(function () {
             		// Get the question of the response 
             		let question = $(this).find("[id*='ResponseQues']");
+            		let questionId = parseInt(question.attr('id').replace('ResponseQues', ''));
                     
             		// Filter the responses
-            		if (checkbox.is(":checked") && $('#txtCurrentQuestion').text() !== question.text()) {
+            		if (checkbox.is(":checked") && $('#txtCurrentQuestion').text() !== question.text() || questionId === -1) {
             			$(this).hide();
             		} else {
             			$(this).show();
@@ -473,6 +476,9 @@
                     success: function () {
                     	// Update the live participants list
                         getParticipantsForQuestionAndPopulateList($('#CurrentQuestion_Id').val(), $('#liveParticipantResponseList'), false);
+                        
+                        // Update the scores list
+                        getParticipantScores($('#Quiz_Id').val());
                         
                         // Flip the button
                         e.textContent = "-";
@@ -506,6 +512,19 @@
                    });
             	}
             }
+        }
+        
+        function getParticipantScores(quizId) {
+            $.ajax({
+                type: 'GET',
+                url: '/api/quiz/participantScores',
+                data: {
+                    quizId: quizId
+                },
+                success: function (participantScores) {
+                    refreshParticipantScoresTable('scoresTable', participantScores);
+                }     
+            });
         }
     </script>
 }

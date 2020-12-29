@@ -119,6 +119,13 @@
                 }
             };
         	
+        	gameStateHub.client.startQuiz = function (quizId) {
+        		// Call function to get current question
+        		if (selectedQuizId == quizId) {
+					getCurrentQuestion();
+				}
+			};
+        	
         	gameStateHub.client.handleQuizStateChange = function (quizId, newStatus) {
         		// Only execute if the currently selected quiz matches the state change
         		if (selectedQuizId == quizId) {
@@ -197,8 +204,8 @@
                 console.log(e);	
             });
         	
-        	availableQuizzesDropDown.change(dropDownOnChange)
-        	function dropDownOnChange() {
+        	availableQuizzesDropDown.change(getCurrentQuestion);
+        	function getCurrentQuestion() {
                 // Get the current game state (round and question number)
                 selectedQuizId = availableQuizzesDropDown.val();
                 $.ajax({

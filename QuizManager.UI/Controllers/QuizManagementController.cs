@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using QuizManager.Data.Factories;
+using QuizManager.Models.Queries;
 using QuizManager.UI.Models;
 
 namespace QuizManager.UI.Controllers
@@ -40,7 +41,17 @@ namespace QuizManager.UI.Controllers
             model.Participants = quizRepo.GetQuizScores(quizId);
             model.AllUsers = userRepo.GetAllUsers();
             model.CurrentQuestion = gameStateRepo.GetCurrentQuestionForQuiz(quizId);
-            model.Responses = responseRepo.GetResponseItemsForQuiz(quizId).OrderByDescending(item => item.Timestamp);
+
+            var responseItems = responseRepo.GetResponseItemsForQuiz(quizId).OrderByDescending(item => item.Timestamp);
+            if (!responseItems.Any())
+            {
+                // Add dummy item if there are no responses
+                model.Responses = new[] {new ResponseItem {Id = -1, Name = "Placeholder"}};
+            }
+            else
+            {
+                model.Responses = responseItems;
+            }
 
             model.IsAcceptingSubmissions = AppHelperFunctions.IsQuizAcceptingSubmissions(quizId);
 

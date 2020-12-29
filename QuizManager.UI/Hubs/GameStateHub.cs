@@ -6,6 +6,12 @@ namespace QuizManager.UI.Hubs
 {
     public class GameStateHub : Hub
     {
+        public void StartQuiz(int quizId)
+        {
+            // Inform clients to update question
+            Clients.All.startQuiz(quizId);
+        }
+
         public void NextQuestion(int quizId)
         {
             var gameStateRepo = GameStateRepositoryFactory.GetRepository();
