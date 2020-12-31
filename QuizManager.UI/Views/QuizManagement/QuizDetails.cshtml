@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "QuizDetails";
 }
+@Scripts.Render("~/bundles/helperFunctions")
 
 <h1>@Model.Quiz.Name</h1>
 
@@ -157,11 +158,15 @@
                                             <div id="@(response.Id)ResponseTime" class="card-title mb-2">
                                                 @if (response.Timestamp.Date == DateTime.Today)
                                                 {
-                                                    @response.Timestamp.ToString("HH:mm:ss.fff")
+                                                    <script type="text/javascript">
+                                                        document.write(convertDateTimeTimeOnly("@response.Timestamp.ToString("u")"));
+                                                    </script>
                                                 }
                                                 else
                                                 {
-                                                    @response.Timestamp
+                                                    <script type="text/javascript">
+                                                        document.write(convertDateTime("@response.Timestamp.ToString("u")"));
+                                                    </script>
                                                 }
                                             </div>
                                         </div>
@@ -251,7 +256,6 @@
     @Scripts.Render("~/bundles/signalr")
     @Scripts.Render("/signalr/hubs")
     @Scripts.Render("~/bundles/sharedUpdates")
-    @Scripts.Render("~/bundles/helperFunctions")
     <script>
         $(function (){
         	let questionIdField = $('#CurrentQuestion_Id');
@@ -284,7 +288,7 @@
             	name.text(responseItem.Name);
             	let timestamp = newCard.find("[id*='ResponseTime']");
             	timestamp.attr('id', responseItem.Id + 'ResponseTime');
-            	timestamp.text(convertDateTime(responseItem.TimestampString));
+            	timestamp.text(convertDateTimeTimeOnly(responseItem.Timestamp));
             	let question = newCard.find("[id*='ResponseQues']");
             	question.attr('id', responseItem.Id + 'ResponseQues');
             	question.text('Round ' + responseItem.Round + ' Question ' + responseItem.QuestionNumber);

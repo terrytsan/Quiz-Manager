@@ -309,7 +309,7 @@
 											<div class="col-9">
 												<div class="row">
 													<div id="${response.UserId}ResponseUser" class="col">${response.Name}</div>
-    												<div class="col">${response.TimestampString}</div>
+    												<div class="col">${convertDateTimeTimeOnly(response.Timestamp + 'Z')}</div>
     												<div id="${response.QuestionId}ResponseQues" class="col">Round ${response.Round} Question ${response.QuestionNumber}</div>
 												</div>
 											</div>

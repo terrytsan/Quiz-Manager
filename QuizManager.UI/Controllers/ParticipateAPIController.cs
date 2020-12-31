@@ -114,10 +114,6 @@ namespace QuizManager.UI.Controllers
             var responseRepo = ResponseRepositoryFactory.GetRepository();
 
             var responses = responseRepo.GetResponseItemsForQuiz(quizId).OrderByDescending(item => item.Timestamp);
-            foreach (var responseItem in responses)
-            {
-                responseItem.TimestampString = responseItem.Timestamp.ToString("HH:mm:ss.fff");
-            }
 
             return Ok(responses);
         }

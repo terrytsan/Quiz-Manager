@@ -1,13 +1,15 @@
-﻿// Converts the C# DateTime into a human readable form (date and time)
+﻿// Converts the C# DateTime (yyyy-mm-ddThh:mm:ss.fff%K) into a human readable form (date and time)
 function convertDateTime(timestamp) {
-	let tIndex = timestamp.indexOf("T");
-	return timestamp.substring(0, tIndex) + ' ' + timestamp.substring(tIndex + 1);
+	// Create js date from iso formatted string
+	let jsDate = new Date(timestamp);
+	return jsDate.toLocaleString();
 }
 
-// Converts the C# DateTime into a human readable form (time only)
+// Converts the C# DateTime (yyyy-mm-ddThh:mm:ss.fff%K) into a human readable form (hh:mm:ss.fff)
 function convertDateTimeTimeOnly(timestamp) {
-	let tIndex = timestamp.indexOf("T");
-	return timestamp.substring(tIndex + 1);
+	// Create js date from iso formatted string
+	let jsDate = new Date(timestamp);
+	return (`${("0" + jsDate.getHours()).substr(-2)}:${("0" + jsDate.getMinutes()).substr(-2)}:${("0" + jsDate.getSeconds()).substr(-2)}.${("00" + jsDate.getMilliseconds()).substr(-3)}`);
 }
 
 // Gets the participants for the question and populates a list with live response information
@@ -42,7 +44,7 @@ function getParticipantsForQuestionAndPopulateList(questionId, listToPopulate, i
 						let timestampDiv = document.createElement('div');
 						// Add the timestamp if it's requested
 						if (participant.HasAnswered && includeTimestamp) {
-							timestampDiv.innerText = convertDateTimeTimeOnly(participant.LatestAnswerTime);
+							timestampDiv.innerText = convertDateTimeTimeOnly(participant.LatestAnswerTime + 'Z');
 						}
 						container.appendChild(timestampDiv)
 
@@ -67,7 +69,7 @@ function updateLiveParticipantResponsesList(responseItem, participantsList, incl
 			$(this).addClass("list-group-item-success");
 			// Add the timestamp if requested
 			if (includeTimestamp) {
-				$(this).children(":first").children().eq(1).text(convertDateTimeTimeOnly(responseItem.TimestampString));
+				$(this).children(":first").children().eq(1).text(convertDateTimeTimeOnly(responseItem.Timestamp));
 			}
 
 			// Leave the .each() 
