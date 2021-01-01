@@ -208,8 +208,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Hubs\GameStateHub.cs"/>
-    <Compile Include="Hubs\ParticipateHub.cs"/>
+    <Compile Include="Hubs\QuizHub.cs"/>
     <Compile Include="Migrations\202011231327372_init.cs"/>
     <Compile Include="Migrations\202011231327372_init.Designer.cs">
       <DependentUpon>202011231327372_init.cs</DependentUpon>
@@ -273,16 +272,16 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Scripts\popper-utils.js" />
-    <Content Include="Scripts\popper-utils.min.js" />
-    <Content Include="Scripts\popper.js" />
-    <Content Include="Scripts\popper.min.js" />
+    <Content Include="Scripts\popper-utils.js"/>
+    <Content Include="Scripts\popper-utils.min.js"/>
+    <Content Include="Scripts\popper.js"/>
+    <Content Include="Scripts\popper.min.js"/>
     <Content Include="Scripts\sharedSignalr.js"/>
-    <Content Include="Scripts\src\index.js" />
-    <Content Include="Scripts\src\methods\defaults.js" />
-    <Content Include="Scripts\src\methods\destroy.js" />
-    <Content Include="Scripts\src\methods\disableEventListeners.js" />
-    <Content Include="Scripts\src\methods\enableEventListeners.js" />
+    <Content Include="Scripts\src\index.js"/>
+    <Content Include="Scripts\src\methods\defaults.js"/>
+    <Content Include="Scripts\src\methods\destroy.js"/>
+    <Content Include="Scripts\src\methods\disableEventListeners.js"/>
+    <Content Include="Scripts\src\methods\enableEventListeners.js"/>
     <Content Include="Scripts\src\methods\placements.js"/>
     <Content Include="Scripts\src\methods\update.js"/>
     <Content Include="Scripts\src\modifiers\applyStyle.js"/>

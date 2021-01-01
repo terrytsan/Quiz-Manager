@@ -96,115 +96,123 @@
     <script type="text/javascript">
         $(function () {
         	let availableQuizzesDropDown = $('#availableQuizzesDropDown');
-        	let participate = $.connection.participateHub;
-        	let gameStateHub = $.connection.gameStateHub;
+        	let quizHub = $.connection.quizHub;
         	let questionId = 0;
         	let selectedQuizId = 0;
         	let chkFilterCurrentQuestion = $('#chkFilterCurrentQuestion');
 			let chkFilterCurrentUser = $('#chkFilterCurrentUser');
         	
         	// Create a function that the hub will call to update participants list
-        	participate.client.handleNewResponseSubmission = function (responseItem) {
+        	quizHub.client.handleNewResponseSubmission = function (responseItem) {
         		updateLiveParticipantResponsesList(responseItem, $('#participantsList'), true)
             };
         	
-        	gameStateHub.client.advanceQuestion = function (quizId, nextQuestion){
+        	quizHub.client.advanceQuestion = function (quizId, nextQuestion) {
         		// Update the participants list
         		getParticipantsForQuestionAndPopulateList(nextQuestion.Id, $('#participantsList') ,true)
-        		if (selectedQuizId == quizId) {
-        			questionId=nextQuestion.Id;
-        	        updateCurrentQuestionText(nextQuestion);
-        	        //Retrieve the quiz status
-        	        getIsAcceptingSubmissions(selectedQuizId);
-                }
+				questionId = nextQuestion.Id;
+				updateCurrentQuestionText(nextQuestion);
+				//Retrieve the quiz status
+				getIsAcceptingSubmissions(selectedQuizId);
             };
         	
-        	gameStateHub.client.startQuiz = function (quizId) {
+        	quizHub.client.startQuiz = function () {
         		// Call function to get current question
-        		if (selectedQuizId == quizId) {
-					getCurrentQuestion();
-				}
+				getCurrentQuestion();
 			};
         	
-        	gameStateHub.client.handleQuizStateChange = function (quizId, newStatus) {
-        		// Only execute if the currently selected quiz matches the state change
-        		if (selectedQuizId == quizId) {
-                	updateQuizStatusBadge(newStatus);
-                	toggleShowResponsesBtn(newStatus);
-				}
+        	quizHub.client.handleQuizStateChange = function (newStatus) {
+				updateQuizStatusBadge(newStatus);
+				toggleShowResponsesBtn(newStatus);
             }
             
-            gameStateHub.client.startCountdown = function (quizId, length) {
-        		if (selectedQuizId == quizId) {
-					startCountdown(length, $('#txtCurrentQuestion'));
-				}
+            quizHub.client.startCountdown = function (length) {
+				startCountdown(length, $('#txtCurrentQuestion'));
 			}
         	
-        	participate.client.updateParticipantScores = function (newScores) {
+        	quizHub.client.updateParticipantScores = function (newScores) {
         		refreshParticipantScoresTable('scoresTable', newScores);
             };
         	
-        	participate.client.updateResponseScore = function (responseId, newScore) {
+        	quizHub.client.updateResponseScore = function (responseId, newScore) {
         		updateResponseScore(responseId, newScore);
 			};
+			
+			let tryingToReconnectSignalR = false;
+			
+			$.connection.hub.reconnecting(function() {
+				tryingToReconnectSignalR = true;
+				console.log("Reconnecting");
+			});
+        	
+			$.connection.hub.reconnected(function() {
+				tryingToReconnectSignalR = false;
+				console.log("Reconnected");
+			});
+			
+			$.connection.hub.disconnected(function() {
+				if (tryingToReconnectSignalR) {
+					console.log("Disconnected");
+				}
+			});
         	
         	// Start the SignalR connection
-        	$.connection.hub.start()
-        	.done(function () {
-        		console.log("Connected to hub");
-        		
-        		// Set up the submit button to send data to hub
-        		$('#submitResponseForm').submit(function (e) {
-                    e.preventDefault();
-                    
-                    // Dismiss the submission closed alert if not already
-                    let submissionsAlert = $('#submissionsClosedAlert')
-					if (submissionsAlert.length){
-                    	submissionsAlert.alert('close');
-                    }
-                    // Validate form
-                    if ($('#submitResponseForm').valid())
-                    {
-                        let txtResponse = $('#txtResponse');
-                                                    
-                        participate.server.submitResponse(questionId, txtResponse.val(), selectedQuizId)
-						.done(function (isSuccessful) {
-							// Clear validation messages
-							$("#submitResponseForm input").clearErrors();
-
-							if (!isSuccessful) {
-                            	$('#submitResponseForm').append(
-									'<div id="submissionsClosedAlert" class="alert alert-danger alert-dismissible fade show" role="alert">\n' +
-                            		'&#128514; Submissions are closed.' +
-                            		'<button type="button" class="close" data-dismiss="alert" aria-label="Close">\n' +
-                            		'    <span aria-hidden="true">&times;</span>\n' +
-                            		'  </button>' +
-                            		'</div>');
-                            }
-						})
-						.fail(function (e) {
-							console.log(e);
-						});
-                        
-                        // Clear the answer box and set focus
-                        txtResponse.val('').focus();
-                    }		           
-                });
-        		
-        	    participate.server.getOwnUserId()
-        	        .done(function (userId) {
-        	            console.log("Got user ID:");
-        	            console.log(userId);
-                    })
-                    .fail(function (e) {
-                        console.log(e);	
-                    });
-            })
-            .fail(function (e){
-                console.log(e);	
-            });
+        	function startSignalRConnection() {
+        		// Disconnect from SignalR (remove self from any groups)
+        		$.connection.hub.stop();
+				$.connection.hub.start()
+				.done(function () {
+					// Join the SignalR group for the selected quiz
+					quizHub.server.joinQuizGroup(selectedQuizId);
+					console.log("Connected to hub");
+				})
+				.fail(function (e) {
+					console.log(e);	
+				});
+			}
         	
-        	availableQuizzesDropDown.change(getCurrentQuestion);
+        	// Set up the submit button to send data to hub
+			$('#submitResponseForm').submit(function (e) {
+				e.preventDefault();
+				
+				// Dismiss the submission closed alert if not already
+				let submissionsAlert = $('#submissionsClosedAlert')
+				if (submissionsAlert.length) {
+					submissionsAlert.alert('close');
+				}
+				// Validate form
+				if ($('#submitResponseForm').valid()) {
+					let txtResponse = $('#txtResponse');
+												
+					quizHub.server.submitResponse(questionId, txtResponse.val(), selectedQuizId)
+					.done(function (isSuccessful) {
+						// Clear validation messages
+						$("#submitResponseForm input").clearErrors();
+
+						if (!isSuccessful) {
+							$('#submitResponseForm').append(
+								'<div id="submissionsClosedAlert" class="alert alert-danger alert-dismissible fade show" role="alert">\n' +
+								'&#128514; Submissions are closed.' +
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close">\n' +
+								'    <span aria-hidden="true">&times;</span>\n' +
+								'  </button>' +
+								'</div>');
+						}
+					})
+					.fail(function (e) {
+						console.log(e);
+					});
+					
+					// Clear the answer box and set focus
+					txtResponse.val('').focus();
+				}		           
+			});
+        	
+        	availableQuizzesDropDown.change(function () {
+        		getCurrentQuestion();
+        		startSignalRConnection();
+			});
+        		
         	function getCurrentQuestion() {
                 // Get the current game state (round and question number)
                 selectedQuizId = availableQuizzesDropDown.val();

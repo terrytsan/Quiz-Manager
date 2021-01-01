@@ -260,11 +260,10 @@
         $(function (){
         	let questionIdField = $('#CurrentQuestion_Id');
         	let quizId = $('#Quiz_Id').val();
-        	let gameStateHub = $.connection.gameStateHub;
-        	let participate = $.connection.participateHub;
+        	let quizHub = $.connection.quizHub;
         	
         	// Function that the hub will call to update the current question text
-        	gameStateHub.client.advanceQuestion = function (quizId, nextQuestion){
+        	quizHub.client.advanceQuestion = function (quizId, nextQuestion) {
         	    updateCurrentQuestionText(nextQuestion);
         	    questionIdField.val(nextQuestion.Id);
         	    // Update the awaiting participants list
@@ -274,10 +273,10 @@
             };
             
             // Function that the hub will call to show the end of quiz alert
-            gameStateHub.client.showEndOfQuizAlert = () => showEndOfQuizAlert($('#rowChangeQuestion'));
+            quizHub.client.showEndOfQuizAlert = () => showEndOfQuizAlert($('#rowChangeQuestion'));
             
             // Function that the hub will call when there a new response has been submitted
-            participate.client.handleNewResponseSubmission = function (responseItem) {
+            quizHub.client.handleNewResponseSubmission = function (responseItem) {
             	// Clone the first card in the list
             	let responseList = $('#responsesList');
             	let firstCard = responseList.children(":first");
@@ -313,78 +312,80 @@
                 updateLiveParticipantResponsesList(responseItem, $('#liveParticipantResponseList'), false);
             };
             
-            participate.client.updateParticipantScores = function (newScores) {
+            quizHub.client.updateParticipantScores = function (newScores) {
                 refreshParticipantScoresTable('scoresTable', newScores);
             };
             
-            gameStateHub.client.handleQuizStateChange = function (quizId, newStatus) {
+            quizHub.client.handleQuizStateChange = function (newStatus) {
                 updateQuizStatusBadge(newStatus);
             }
             
-            gameStateHub.client.startCountdown = function (quizId, length) {
+            quizHub.client.startCountdown = function (length) {
                 startCountdown(length, $('#rowToggleSubmissions'));
             }
             
             // Start the SignalR connection
             $.connection.hub.start()
             .done(function () {
+            	// Join the SignalR group for the selected quiz
+            	quizHub.server.joinQuizGroup(quizId);
             	console.log("Connected to hub");
-            
-            	$('#btnNextQuestion').click(function () {
-            		gameStateHub.server.nextQuestion(quizId);
-            		// Enable submissions if checkbox checked
-            		let btnToggleSubmissions = document.getElementById('btnToggleSubmissions');
-            		if ($('#chkAutoEnableOnNextQ').is(":checked") && btnToggleSubmissions.textContent === "Enable Submissions") {
-                        toggleSubmissions.call(btnToggleSubmissions);
-                    }
-                });	
-            	
-            	$('#btnPrevQuestion').click(function () {
-            		gameStateHub.server.prevQuestion(quizId);
-                });	
-            	
-            	// Assign click handler to enable/disable submissions button
-                $('#btnToggleSubmissions').click(function () {
-                	// Call function passing button as context
-                	toggleSubmissions.call(document.getElementById('btnToggleSubmissions'));
-                });
-                
-                function toggleSubmissions() {
-                    let enableSubmissionsDelayInput = $('#enableSubmissionsDelay');
-                    let delay = parseInt(enableSubmissionsDelayInput.val()) * 1000;
-                    
-                    // Reset the delay value
-                    if ($('#chkResetDelay').is(":checked")) {
-                        enableSubmissionsDelayInput.val('');
-                    }
-                    
-                    // Check if there is already a countdown occuring (button already pressed)
-                    if (!$('#cdProgressBar').length) {
-                        if (this.textContent === "Disable Submissions") {
-                            // Call hub method
-                            this.textContent = "Enable Submissions";
-                            this.classList.remove('btn-danger');
-                            this.classList.add('btn-success');
-                            setState(false, delay);
-                        } else {
-                            // Call hub method
-                            this.textContent = "Disable Submissions";
-                            this.classList.remove('btn-success');
-                            this.classList.add('btn-danger');
-                            ($('#chkNoEnableDelay').is(":checked")) ? setState(true, NaN) : setState(true, delay);
-                        }
-                    }
-                }
             })
             .fail (function (e){
             	console.log(e);
             });
             
+            $('#btnNextQuestion').click(function () {
+                quizHub.server.nextQuestion(quizId);
+                // Enable submissions if checkbox checked
+                let btnToggleSubmissions = document.getElementById('btnToggleSubmissions');
+                if ($('#chkAutoEnableOnNextQ').is(":checked") && btnToggleSubmissions.textContent === "Enable Submissions") {
+                    toggleSubmissions.call(btnToggleSubmissions);
+                }
+            });	
+                        	
+            $('#btnPrevQuestion').click(function () {
+                quizHub.server.prevQuestion(quizId);
+            });	
+            
+            // Assign click handler to enable/disable submissions button
+            $('#btnToggleSubmissions').click(function () {
+                // Call function passing button as context
+                toggleSubmissions.call(document.getElementById('btnToggleSubmissions'));
+            });
+            
+            function toggleSubmissions() {
+                let enableSubmissionsDelayInput = $('#enableSubmissionsDelay');
+                let delay = parseInt(enableSubmissionsDelayInput.val()) * 1000;
+                
+                // Reset the delay value
+                if ($('#chkResetDelay').is(":checked")) {
+                    enableSubmissionsDelayInput.val('');
+                }
+                
+                // Check if there is already a countdown occuring (button already pressed)
+                if (!$('#cdProgressBar').length) {
+                    if (this.textContent === "Disable Submissions") {
+                        // Call hub method
+                        this.textContent = "Enable Submissions";
+                        this.classList.remove('btn-danger');
+                        this.classList.add('btn-success');
+                        setState(false, delay);
+                    } else {
+                        // Call hub method
+                        this.textContent = "Disable Submissions";
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-danger');
+                        ($('#chkNoEnableDelay').is(":checked")) ? setState(true, NaN) : setState(true, delay);
+                    }
+                }
+            }
+            
             // Sets the state of the quiz in [delay]ms time
             function setState(newState, time)
             {
-            	gameStateHub.server.startTimer(quizId, time);
-            	setTimeout(function (){gameStateHub.server.setState(quizId, newState)},time);
+            	quizHub.server.startTimer(quizId, time);
+            	setTimeout(function (){quizHub.server.setState(quizId, newState)},time);
             }
         	
         	// Assign onClick to StartQuiz button if it exists
@@ -402,7 +403,7 @@
                             // Show success alert
                             console.log("Success");
                             // Update participant page
-                            gameStateHub.server.startQuiz(quizId);
+                            quizHub.server.startQuiz(quizId);
                             // Refresh the page
                             window.location = $('#thisPageUrl').val()
                             return false;
@@ -427,7 +428,7 @@
             		let newPoints = parseInt(scoreBadge.text()) + 1;
             		scoreBadge.text(newPoints);
             		// Call method in hub to update the response's points
-            		participate.server.updateResponsePoints(quizId, responseId, newPoints);
+            		quizHub.server.updateResponsePoints(quizId, responseId, newPoints);
             	} else if (this.id.includes('Down')) {
             		let responseId = this.id.replace('ScoreDownBtn', '');
             		let scoreBadge = $('#' + responseId + 'ScoreBadge');
@@ -437,7 +438,7 @@
             			let newPoints = parseInt(scoreBadge.text()) - 1;
             			scoreBadge.text(newPoints);
             			// Call method in hub to update the response's points
-            			participate.server.updateResponsePoints(quizId, responseId, newPoints);
+            			quizHub.server.updateResponsePoints(quizId, responseId, newPoints);
             		}
             	}
             }
