@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizManager.UI", "QuizManager.UI\QuizManager.UI.csproj", "{330F8815-BCC3-44B5-B7E9-16B768328B27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkQuizManager.UI", "FrameworkQuizManager.UI\FrameworkQuizManager.UI.csproj", "{330F8815-BCC3-44B5-B7E9-16B768328B27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizManager.Data", "QuizManager.Data\QuizManager.Data.csproj", "{ADA92857-2CD4-45B8-AE5E-C222D4B29698}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkQuizManager.Data", "FrameworkQuizManager.Data\FrameworkQuizManager.Data.csproj", "{ADA92857-2CD4-45B8-AE5E-C222D4B29698}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizManager.Models", "QuizManager.Models\QuizManager.Models.csproj", "{1AA56D4F-AFC8-446F-9E46-843CF3566ED9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkQuizManager.Models", "FrameworkQuizManager.Models\FrameworkQuizManager.Models.csproj", "{1AA56D4F-AFC8-446F-9E46-843CF3566ED9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

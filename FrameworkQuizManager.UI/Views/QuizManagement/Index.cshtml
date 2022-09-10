@@ -1,0 +1,31 @@
+﻿@model IEnumerable<FrameworkQuizManager.Models.Tables.Quiz>
+
+@{
+    ViewBag.Title = "My Quizzes";
+}
+
+<div class="row">
+    <div class="col d-flex flex-row">
+        <h2 class="mr-auto mb-3">My Quizzes</h2>
+        <div class="align-self-end my-auto">
+            @Html.ActionLink("+", "CreateQuiz", "QuizManagement", new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    <div id="mainBodyContainer" class="col">
+        @foreach (var quiz in Model)
+        {
+            <div class="card mb-3">
+                <h5 class="card-header">
+                    @quiz.Name
+                </h5>
+                <div class="card-body">
+                    @Html.ActionLink("Manage", "QuizDetails", "QuizManagement", new { quizId = quiz.Id }, new { @class = "btn btn-primary" })
+                </div>
+            </div>
+        }
+    </div>
+</div>
