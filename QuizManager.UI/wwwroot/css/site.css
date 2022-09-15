@@ -1,0 +1,60 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.form-control {
+    margin-bottom: 20px;
+}
+
+.table td, th {
+    text-align: center;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.3s;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
+
+.fade-in-down {
+    animation: fadeInDown 0.3s;
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}

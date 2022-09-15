@@ -1,5 +1,4 @@
-﻿SET IDENTITY_INSERT quizmanager.dbo.AspNetUsers ON;
-INSERT INTO quizmanager.dbo.AspNetUsers (Id, Email, EmailConfirmed, PasswordHash, SecurityStamp, PhoneNumber,
+﻿INSERT INTO quizmanager.dbo.AspNetUsers (Id, Email, EmailConfirmed, PasswordHash, SecurityStamp, PhoneNumber,
 										 PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnabled,
 										 AccessFailedCount, UserName)
 VALUES (N'1ab1cf34-da50-4b1b-9c25-b292b909bcb6', N'anotheruser3@test.com', 0,
@@ -29,7 +28,6 @@ INSERT INTO quizmanager.dbo.AspNetUsers (Id, Email, EmailConfirmed, PasswordHash
 VALUES (N'd3b94c0a-4c50-4d3c-ab57-00aba31da471', N'user2@test.com', 0,
 		N'APWrzrjCXntEkSa3DZ/RlIYrclKV4kOlR6bsg/YMl2OFDyQSjm9MEQs9vJ55IFJLxA==',
 		N'23b22a6c-72f0-45e0-a241-53b0b3111dda', NULL, 0, 0, 1, 0, N'Jimmy');
-SET IDENTITY_INSERT quizmanager.dbo.AspNetUsers OFF;
 
 SET IDENTITY_INSERT quizmanager.dbo.quiz ON;
 INSERT INTO quizmanager.dbo.quiz (id, hostId, name, startDate)
@@ -74,8 +72,10 @@ SET IDENTITY_INSERT quizmanager.dbo.question OFF;
 SET IDENTITY_INSERT quizmanager.dbo.AspNetUsers_quiz ON;
 INSERT INTO quizmanager.dbo.AspNetUsers_quiz (id, QuizId, UserId)
 VALUES (1, 1, N'b3b50224-1c60-4fb7-8adc-e6457f1a8185');
+SET IDENTITY_INSERT quizmanager.dbo.AspNetUsers_quiz ON;
 INSERT INTO quizmanager.dbo.AspNetUsers_quiz (id, QuizId, UserId)
 VALUES (2, 2, N'b3b50224-1c60-4fb7-8adc-e6457f1a8185');
+SET IDENTITY_INSERT quizmanager.dbo.AspNetUsers_quiz OFF;
 INSERT INTO quizmanager.dbo.AspNetUsers_quiz (id, QuizId, UserId)
 VALUES (3, 2, N'6d49ac46-be22-476b-9055-ac649039348e');
 INSERT INTO quizmanager.dbo.AspNetUsers_quiz (id, QuizId, UserId)
